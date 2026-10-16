@@ -168,6 +168,8 @@
     "resetUrl": "URL Reset",
     "exceedToleranceDays": "Giorni tolleranza per ban",
     "activateUrl": "URL Attivazione",
+    "quotaUsed": "Spazio utilizzato",
+    "quotaTotal": "Quota di archiviazione",
     "domainNotLicensed": "Dominio non autorizzato",
     "domainNotLicensedDes": "L'URL del sito che hai impostato contiene un dominio non autorizzato, aggiungi questo sottodominio nella <0>Dashboard Gestione Licenze</0> e clicca il pulsante qui sotto per aggiornare la licenza e riprova.",
     "showSettings": "Mostra impostazioni",

@@ -168,6 +168,8 @@
     "resetUrl": "重置連結",
     "exceedToleranceDays": "設置的封禁寬容天數",
     "activateUrl": "激活連結",
+    "quotaUsed": "已用容量",
+    "quotaTotal": "總容量",
     "domainNotLicensed": "域名未授權",
     "domainNotLicensedDes": "你設定的站點 URL 中包含未授權的域名，請在 <0>授權管理面板</0> 中添加此子域名，然後點選下方按鈕更新授權後重試。",
     "showSettings": "顯示設定",

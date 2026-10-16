@@ -168,6 +168,8 @@
     "resetUrl": "URL de réinitialisation",
     "exceedToleranceDays": "Jours de tolérance pour l'interdiction",
     "activateUrl": "URL d'activation",
+    "quotaUsed": "Stockage utilisé",
+    "quotaTotal": "Quota de stockage",
     "domainNotLicensed": "Domaine non sous licence",
     "domainNotLicensedDes": "L'URL du site que vous avez définie contient un domaine non autorisé, veuillez ajouter ce sous-domaine dans le <0>Tableau de bord de gestion des licences</0> et cliquez sur le bouton ci-dessous pour mettre à jour la licence et réessayer.",
     "showSettings": "Afficher les paramètres",

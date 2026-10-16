@@ -168,6 +168,8 @@
     "resetUrl": "リセットリンク",
     "exceedToleranceDays": "設定された禁止猶予日数",
     "activateUrl": "有効化リンク",
+    "quotaUsed": "使用済み容量",
+    "quotaTotal": "総容量",
     "domainNotLicensed": "ドメイン未承認",
     "domainNotLicensedDes": "設定されたサイトURLに未承認のドメインが含まれています。<0>承認管理パネル</0>でこのサブドメインを追加し、下のボタンをクリックして承認を更新してから再試行してください。",
     "showSettings": "表示設定",

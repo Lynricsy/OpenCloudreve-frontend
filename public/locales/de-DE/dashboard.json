@@ -168,6 +168,8 @@
     "resetUrl": "URL zurücksetzen",
     "exceedToleranceDays": "Toleranztage für Sperrung",
     "activateUrl": "Aktivierungs-URL",
+    "quotaUsed": "Belegter Speicher",
+    "quotaTotal": "Speicherkontingent",
     "domainNotLicensed": "Domain nicht lizenziert",
     "domainNotLicensedDes": "Die von Ihnen festgelegte Site-URL enthält eine nicht autorisierte Domain, bitte fügen Sie diese Subdomain im <0>Lizenzverwaltungs-Dashboard</0> hinzu und klicken Sie auf die Schaltfläche unten, um die Lizenz zu aktualisieren und es erneut zu versuchen.",
     "showSettings": "Einstellungen anzeigen",

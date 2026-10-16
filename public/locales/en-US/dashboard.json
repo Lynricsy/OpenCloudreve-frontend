@@ -168,6 +168,8 @@
     "resetUrl": "Reset URL",
     "exceedToleranceDays": "Tolerance days for banning",
     "activateUrl": "Activate URL",
+    "quotaUsed": "Used storage",
+    "quotaTotal": "Storage quota",
     "domainNotLicensed": "Domain not licensed",
     "domainNotLicensedDes": "The site URL you set contains an unauthorized domain, please add this subdomain in the <0>License Management Dashboard</0> and click the button below to update the license and try again.",
     "showSettings": "Show settings",

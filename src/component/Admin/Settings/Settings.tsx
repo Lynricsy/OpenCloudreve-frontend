@@ -273,6 +273,7 @@ const Settings = () => {
                     "fromName",
                     "mail_activation_template",
                     "mail_reset_template",
+                    "mail_exceed_quota_template",
                   ]}
                 >
                   <Email />

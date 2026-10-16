@@ -168,6 +168,8 @@
     "resetUrl": "Restablecer URL",
     "exceedToleranceDays": "Días de tolerancia para prohibición",
     "activateUrl": "URL de activación",
+    "quotaUsed": "Almacenamiento usado",
+    "quotaTotal": "Cuota de almacenamiento",
     "domainNotLicensed": "Dominio no licenciado",
     "domainNotLicensedDes": "La URL del sitio que configuraste contiene un dominio no autorizado, por favor agrega este subdominio en el <0>Panel de Administración de Licencias</0> y haz clic en el botón de abajo para actualizar la licencia e inténtalo de nuevo.",
     "showSettings": "Mostrar configuración",

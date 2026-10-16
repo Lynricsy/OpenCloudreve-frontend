@@ -168,6 +168,8 @@
     "resetUrl": "Resetuj URL",
     "exceedToleranceDays": "Dni tolerancji dla banowania",
     "activateUrl": "Aktywuj URL",
+    "quotaUsed": "Wykorzystane miejsce",
+    "quotaTotal": "Limit pamięci",
     "domainNotLicensed": "Domena nielicencjonowana",
     "domainNotLicensedDes": "Ustawiony adres URL witryny zawiera nieautoryzowaną domenę. Dodaj tę poddomenę w <0>Panelu Zarządzania Licencjami</0> i kliknij przycisk poniżej, aby zaktualizować licencję i spróbować ponownie.",
     "showSettings": "Pokaż ustawienia",

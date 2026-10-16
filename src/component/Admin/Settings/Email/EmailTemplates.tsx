@@ -96,6 +96,20 @@ const EmailTemplates: React.FC = () => {
       key: "mail_exceed_quota_template",
       title: "quotaExceededEmailTemplate",
       description: "quotaExceededEmailTemplateDes",
+      magicVars: [
+        ...commonMagicVars,
+        ...userMagicVars,
+        {
+          value: "settings.quotaUsed",
+          name: "{{ .Used }}",
+          example: "10 GB",
+        },
+        {
+          value: "settings.quotaTotal",
+          name: "{{ .Total }}",
+          example: "10 GB",
+        },
+      ],
     },
     {
       key: "mail_reset_template",

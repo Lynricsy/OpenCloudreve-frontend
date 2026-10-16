@@ -167,6 +167,8 @@
     "resetUrl": "재설정 링크",
     "exceedToleranceDays": "설정된 차단 관용 일수",
     "activateUrl": "활성화 링크",
+    "quotaUsed": "사용한 용량",
+    "quotaTotal": "총 용량",
     "domainNotLicensed": "도메인이 라이선스되지 않음",
     "domainNotLicensedDes": "설정한 사이트 URL에 라이선스되지 않은 도메인이 포함되어 있습니다. <0>라이선스 관리 패널</0>에서 이 서브도메인을 추가한 후 아래 버튼을 클릭하여 라이선스를 업데이트하고 다시 시도해 주세요.",
     "showSettings": "설정 표시",
