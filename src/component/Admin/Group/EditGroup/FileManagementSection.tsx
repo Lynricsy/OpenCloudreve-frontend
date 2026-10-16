@@ -72,6 +72,16 @@ const FileManagementSection = () => {
     [setGroup],
   );
 
+  const onAllowRelocateChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setGroup((p: GroupEnt) => ({
+        ...p,
+        permissions: new Boolset(p.permissions).set(GroupPermission.relocate, e.target.checked).toString(),
+      }));
+    },
+    [setGroup],
+  );
+
   const onCompressSizeChange = useCallback(
     (e: number) => {
       setGroup((p: GroupEnt) => ({ ...p, settings: { ...p.settings, compress_size: e ? e : undefined } }));
@@ -208,7 +218,12 @@ const FileManagementSection = () => {
             </Collapse>
             <SettingForm lgWidth={5}>
               <FormControl fullWidth>
-                <FormControlLabel control={<Switch checked={false} />} label={t("group.migratePolicy")} />
+                <FormControlLabel
+                  control={
+                    <Switch checked={permission.enabled(GroupPermission.relocate)} onChange={onAllowRelocateChange} />
+                  }
+                  label={t("group.migratePolicy")}
+                />
                 <NoMarginHelperText>{t("group.migratePolicyDes")}</NoMarginHelperText>
               </FormControl>
             </SettingForm>

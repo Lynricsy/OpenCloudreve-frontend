@@ -34,6 +34,7 @@ import ColumnSetting from "../Explorer/ListView/ColumnSetting.tsx";
 import DirectLinks from "./DirectLinks/DirectLinks.tsx";
 import DirectLinksControl from "./DirectLinksControl.tsx";
 import MountPolicy from "./MountPolicy.tsx";
+import Relocate from "./Relocate.tsx";
 
 const Dialogs = () => {
   const showCreateArchive = useAppSelector((state) => state.globalState.createArchiveDialogOpen);
@@ -47,6 +48,7 @@ const Dialogs = () => {
   const archivePreview = useAppSelector((state) => state.globalState.archiveViewer);
   const desktopMountSetup = useAppSelector((state) => state.globalState.desktopMountSetupDialogOpen);
   const mountPolicy = useAppSelector((state) => state.globalState.mountPolicyDialogOpen);
+  const relocate = useAppSelector((state) => state.globalState.relocateDialogOpen);
 
   return (
     <>
@@ -84,6 +86,7 @@ const Dialogs = () => {
       {archivePreview != undefined && <ArchivePreview />}
       {desktopMountSetup != undefined && <DesktopMountSetup />}
       {mountPolicy != undefined && <MountPolicy />}
+      {relocate != undefined && <Relocate />}
     </>
   );
 };

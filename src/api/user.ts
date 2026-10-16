@@ -90,6 +90,7 @@ export const GroupPermission = {
   archive_task: 5,
   webdav_proxy: 6,
   share_download: 7,
+  relocate: 8,
   remote_download: 9,
   select_node: 10,
   redirected_source: 11,

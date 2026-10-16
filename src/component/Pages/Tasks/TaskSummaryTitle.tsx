@@ -108,6 +108,32 @@ const TaskSummaryTitle = ({ type, summary, isInDashboard = false }: TaskSummaryT
           ]}
         />
       );
+    case TaskType.relocate:
+      return (
+        <Trans
+          i18nKey="setting.relocateFileTo"
+          values={{
+            policy: policyOption
+              ? policyOption.find((p) => p.id == summary?.props.dst_policy_id)?.name ?? "Unknown"
+              : "",
+            more: (summary?.props.src_multiple?.length ?? 0) > 3 ? "..." : "",
+          }}
+          components={[
+            <span key={0}>
+              {summary?.props.src_multiple?.slice(0, 3).map((src) => (
+                <StyledFileBadge
+                  key={src}
+                  variant={"outlined"}
+                  simplifiedFile={{
+                    type: FileType.file,
+                    path: src,
+                  }}
+                />
+              ))}
+            </span>,
+          ]}
+        />
+      );
     case TaskType.full_text_rebuild:
       return (
         <Typography variant={"inherit"}>

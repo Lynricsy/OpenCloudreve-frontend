@@ -39,6 +39,9 @@ export interface TaskSummary {
     dst_policy_id?: string;
     failed?: number;
     total?: number;
+    // 存储策略转移：已转移/跳过的实体数
+    relocated?: number;
+    skipped?: number;
     download?: DownloadTaskStatus;
   };
 }
@@ -130,6 +133,7 @@ export enum TaskType {
   create_archive = "create_archive",
   extract_archive = "extract_archive",
   remote_download = "remote_download",
+  relocate = "relocate",
   media_metadata = "media_meta",
   entity_recycle_routine = "entity_recycle_routine",
   explicit_entity_recycle = "explicit_entity_recycle",

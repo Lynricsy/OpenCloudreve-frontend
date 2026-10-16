@@ -7,6 +7,7 @@ import {
   setDirectLinkManagementDialog,
   setManageShareDialog,
   setMountPolicyDialog,
+  setRelocateDialog,
   setVersionControlDialog,
 } from "../../../redux/globalStateSlice.ts";
 import { useAppDispatch } from "../../../redux/hooks.ts";
@@ -132,6 +133,23 @@ const MoreMenuItems = ({ displayOpt, targets }: SubMenuItemsProps) => {
             <StorageOutlined fontSize="small" />
           </ListItemIcon>
           <ListItemText>{t("application:fileManager.mountPolicy")}</ListItemText>
+        </CascadingMenuItem>
+      )}
+      {displayOpt.showRelocate && (
+        <CascadingMenuItem
+          onClick={onClick(() =>
+            dispatch(
+              setRelocateDialog({
+                open: true,
+                files: targets,
+              }),
+            ),
+          )}
+        >
+          <ListItemIcon>
+            <StorageOutlined fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>{t("application:fileManager.relocate")}</ListItemText>
         </CascadingMenuItem>
       )}
     </>

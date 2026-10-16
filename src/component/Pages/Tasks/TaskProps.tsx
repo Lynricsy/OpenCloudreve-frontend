@@ -10,6 +10,7 @@ import { sizeToString } from "../../../util";
 import { formatDuration } from "../../../util/datetime.ts";
 import TimeBadge from "../../Common/TimeBadge.tsx";
 import FileBadge from "../../FileManager/FileBadge.tsx";
+import { useAppSelector } from "../../../redux/hooks.ts";
 
 dayjs.extend(duration);
 
@@ -67,6 +68,7 @@ export const getTaskStatusText = (status: TaskStatus, t: TFunction) => {
 
 const TaskProps = ({ task }: TaskPropsProps) => {
   const { t } = useTranslation();
+  const policyOption = useAppSelector((state) => state.globalState.policyOptionCache);
   const status = useMemo(() => getTaskStatusText(task.status as TaskStatus, t), [task.status, t]);
 
   return (
@@ -154,6 +156,16 @@ const TaskProps = ({ task }: TaskPropsProps) => {
             />
           }
         />
+      )}
+      {task.type == TaskType.relocate && (
+        <>
+          <TaskPropsBlock
+            label={t("fileManager.storagePolicy")}
+            value={policyOption?.find((p) => p.id == task.summary?.props.dst_policy_id)?.name ?? "-"}
+          />
+          <TaskPropsBlock label={t("setting.relocatedEntities")} value={task.summary?.props.relocated ?? 0} />
+          <TaskPropsBlock label={t("setting.skippedEntities")} value={task.summary?.props.skipped ?? 0} />
+        </>
       )}
       <TaskPropsBlock label={t("setting.executeDuration")} value={formatDuration(dayjs.duration(task.duration ?? 0))} />
       {task.resume_time && (task.status == TaskStatus.suspending || task.status == TaskStatus.processing) && (

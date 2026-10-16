@@ -225,6 +225,10 @@ export interface GlobalStateSlice {
   mountPolicyDialogOpen?: boolean;
   mountPolicyDialogFile?: FileResponse;
 
+  // Storage policy relocation dialog
+  relocateDialogOpen?: boolean;
+  relocateDialogFiles?: FileResponse[];
+
   // DnD
   dndState: DndState;
 
@@ -323,6 +327,13 @@ export const globalStateSlice = createSlice({
     },
     closeMountPolicyDialog: (state) => {
       state.mountPolicyDialogOpen = false;
+    },
+    setRelocateDialog: (state, action: PayloadAction<{ open: boolean; files?: FileResponse[] }>) => {
+      state.relocateDialogOpen = action.payload.open;
+      state.relocateDialogFiles = action.payload.files;
+    },
+    closeRelocateDialog: (state) => {
+      state.relocateDialogOpen = false;
     },
     setUploadRawFiles: (
       state,
@@ -960,4 +971,6 @@ export const {
   closeDesktopMountSetupDialog,
   setMountPolicyDialog,
   closeMountPolicyDialog,
+  setRelocateDialog,
+  closeRelocateDialog,
 } = globalStateSlice.actions;

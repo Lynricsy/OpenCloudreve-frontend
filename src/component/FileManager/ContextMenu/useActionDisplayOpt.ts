@@ -80,6 +80,7 @@ export interface DisplayOption {
   showCreateArchive?: boolean;
   showResetThumb?: boolean;
   showMountPolicy?: boolean;
+  showRelocate?: boolean;
 
   andCapability?: Boolset;
   orCapability?: Boolset;
@@ -316,6 +317,12 @@ export const getActionOpt = (
     !!currentUser &&
     parentUrl.fs() == Filesystem.my &&
     (!targets[0].metadata || !targets[0].metadata[Metadata.share_redirect]);
+  display.showRelocate =
+    display.allUpdatable &&
+    !display.hasTrashFile &&
+    !!currentUser &&
+    groupBs.enabled(GroupPermission.relocate) &&
+    parentUrl.fs() == Filesystem.my;
 
   display.showMore =
     display.showVersionControl ||
@@ -323,7 +330,8 @@ export const getActionOpt = (
     display.showCreateArchive ||
     display.showDirectLinkManagement ||
     display.showResetThumb ||
-    display.showMountPolicy;
+    display.showMountPolicy ||
+    display.showRelocate;
   return display;
 };
 

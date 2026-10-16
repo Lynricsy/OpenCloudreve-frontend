@@ -110,6 +110,7 @@ import {
   ListTaskService,
   NodeSummary,
   RebuildFTSIndexWorkflowService,
+  RelocateWorkflowService,
   SetDownloadFilesService,
   TaskListResponse,
   TaskProgresses,
@@ -830,6 +831,23 @@ export function sendCreateArchive(req: ArchiveWorkflowService): ThunkResponse<Ta
     return await dispatch(
       send(
         "/workflow/archive",
+        {
+          data: req,
+          method: "POST",
+        },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
+export function sendRelocate(req: RelocateWorkflowService): ThunkResponse<TaskResponse> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        "/workflow/relocate",
         {
           data: req,
           method: "POST",
