@@ -25,10 +25,6 @@ export interface HomepageSummary {
   version: Version;
 }
 
-export interface ManualRefreshLicenseService {
-  license: string;
-}
-
 export interface GetSettingService {
   keys: string[];
 }
@@ -65,21 +61,6 @@ export interface GroupSetting {
 export interface AdminListGroupResponse {
   groups: GroupEnt[];
   pagination: PaginationResults;
-}
-
-export interface QQConnectConfig {
-  app_id?: string;
-  app_secret?: string;
-  direct_sign_in?: boolean;
-}
-
-export interface LogtoConfig {
-  endpoint?: string;
-  app_id?: string;
-  app_secret?: string;
-  direct_sign_in?: boolean;
-  display_name?: string;
-  direct_sso?: string;
 }
 
 export interface FetchWOPIDiscoveryService {
@@ -253,26 +234,17 @@ export interface User extends CommonMixin {
   status?: UserStatus;
   storage?: number;
   avatar?: string;
-  credit?: number;
-  group_expires?: string;
-  notify_date?: string;
   group_users?: number;
-  previous_group?: number;
   unmanaged_email?: boolean;
   edges: {
     group?: GroupEnt;
     storage_policy?: StoragePolicy;
-    openid?: OpenID[];
     passkey?: Passkey[];
   };
 
   hash_id?: string;
   two_fa_enabled?: boolean;
   capacity?: Capacity;
-}
-
-export interface OpenID extends CommonMixin {
-  provider?: number;
 }
 
 export interface Passkey extends CommonMixin {
@@ -448,60 +420,6 @@ export interface UpsertFileService {
 
 export interface ListEntityResponse {
   entities: Entity[];
-  pagination: PaginationResults;
-}
-
-export interface LogEntry {
-  category: number;
-  failed?: boolean;
-  error?: string;
-  user_agent?: string;
-  is_system?: boolean;
-  reason?: string;
-  email_to?: string;
-  email_title?: string;
-  original_name?: string;
-  new_name?: string;
-  from?: string;
-  to?: string;
-  entity_create_time?: string;
-  storage_policy_id?: string;
-  storage_policy_name?: string;
-  account_id?: number;
-  account?: string;
-  account_uri?: string;
-  payment_id?: number;
-  points_change?: number;
-  sku?: string;
-  storage_size?: number;
-  expire?: string;
-  group_id?: number;
-  group_id_from?: number;
-  direct_link_id?: string;
-  openid_provider?: number;
-  sub?: string;
-  name?: string;
-  passkey_id?: number;
-  exts?: Record<string, string>;
-}
-
-export interface AuditLog extends CommonMixin {
-  type?: number;
-  correlation_id?: string;
-  ip?: string;
-  content?: LogEntry;
-  edges: {
-    user?: User;
-    file?: File;
-    entity?: Entity;
-    share?: Share;
-  };
-
-  user_hash_id?: string;
-}
-
-export interface ListAuditLogResponse {
-  logs: AuditLog[];
   pagination: PaginationResults;
 }
 

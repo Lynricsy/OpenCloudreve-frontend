@@ -42,7 +42,6 @@ export interface PrepareLoginResponse {
   webauthn_enabled: boolean;
   sso_enabled: boolean;
   password_enabled: boolean;
-  qq_enabled: boolean;
 }
 
 export interface CaptchaRequest {
