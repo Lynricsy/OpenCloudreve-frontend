@@ -8,6 +8,8 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import ChainedBackend from "i18next-chained-backend";
 import LocalStorageBackend from "i18next-localstorage-backend";
 
+declare const __LOCALES_HASH__: string;
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 i18n
@@ -28,6 +30,8 @@ i18n
       backendOptions: [
         {
           expirationTime: 7 * 24 * 60 * 60 * 1000, // 7 days
+          // 语言包内容变化后，浏览器里的旧缓存立即失效
+          defaultVersion: __LOCALES_HASH__,
           loadPath: "/locales/{{lng}}/{{ns}}.json",
         },
       ],

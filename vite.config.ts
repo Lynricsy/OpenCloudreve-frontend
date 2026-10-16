@@ -1,6 +1,7 @@
 import react from "@vitejs/plugin-react-swc";
-import { promises as fs } from "fs";
-import { resolve } from "path";
+import { createHash } from "crypto";
+import { promises as fs, readdirSync, readFileSync } from "fs";
+import { join, relative, resolve } from "path";
 import { defineConfig } from "vite";
 // import mkcert from "vite-plugin-mkcert";
 import { VitePWA } from "vite-plugin-pwa";
@@ -8,6 +9,25 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 
 const backend = "http://localhost:5212";
 const backendProxyOption = { target: backend, headers: { host: new URL(backend).host } };
+
+// 语言包内容哈希：i18next-localstorage-backend 会把语言包在浏览器里缓存 7 天，
+// 用它作为缓存版本，语言包一变化就让旧缓存失效，否则升级后新增的文案会显示成键名。
+const localesHash = (() => {
+  const root = resolve(__dirname, "public/locales");
+  const hash = createHash("sha256");
+  const walk = (dir: string) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : 1))) {
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(path);
+      } else {
+        hash.update(relative(root, path)).update("\0").update(readFileSync(path)).update("\0");
+      }
+    }
+  };
+  walk(root);
+  return hash.digest("hex").slice(0, 16);
+})();
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -60,6 +80,7 @@ export default defineConfig({
   ],
   define: {
     __ASSETS_VERSION__: JSON.stringify(process.env.npm_package_version),
+    __LOCALES_HASH__: JSON.stringify(localesHash),
   },
   build: {
     outDir: "build", // keep same as v3 with minimal changes
