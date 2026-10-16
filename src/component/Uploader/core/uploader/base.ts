@@ -153,8 +153,8 @@ export default abstract class Base {
           last_modified: this.task.file.lastModified,
           mime_type: this.task.file.type,
           entity_type: this.task.overwrite ? "version" : undefined,
-          encryption_supported:
-            this.task.policy.encryption && "crypto" in window ? [EncryptionCipher.aes256ctr] : undefined,
+          // 始终按浏览器能力申报：目录树上传时子目录可能挂载了加密策略，由后端按最终策略决定是否加密
+          encryption_supported: "crypto" in window ? [EncryptionCipher.aes256ctr] : undefined,
         },
         this.cancelToken.token,
       );
