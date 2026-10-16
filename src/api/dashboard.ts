@@ -630,3 +630,99 @@ export interface RestoreBackupService {
   target_uid?: number;
   target_dir: string;
 }
+
+// Google Drive 备份/恢复任务事件日志中的一条，消息按 code 翻译（backup.events.<code>）
+export interface GDriveTaskEvent {
+  // 发生时间（RFC3339）
+  t: string;
+  l: GDriveTaskEventLevel;
+  c: string;
+  // 参数名为 snake_case；size 类参数单位为字节
+  p?: Record<string, unknown>;
+}
+
+export type GDriveTaskEventLevel = "info" | "warning" | "error";
+
+// 备份任务的触发方式，旧任务没有该字段
+export enum GDriveBackupTrigger {
+  cron = "cron",
+  manual = "manual",
+}
+
+export enum GDriveBackupPhase {
+  scan = "scan",
+  remote = "remote",
+  manifest = "manifest",
+  gc = "gc",
+  finish = "finish",
+}
+
+// 已派发给从机、尚未完成的一批，覆盖队列文件 [done, end)
+export interface GDriveRemoteBatch {
+  slave_task_id: number;
+  end: number;
+  poll_errors?: number;
+}
+
+// 某个从机的待处理队列进度，written/done 为队列文件的字节偏移
+export interface GDriveRemoteNode {
+  // 写入该节点队列的实体数
+  queued?: number;
+  written: number;
+  done: number;
+  attempts?: number;
+  inflight?: GDriveRemoteBatch;
+}
+
+export interface GDriveBackupStats {
+  processed: number;
+  files: number;
+  size: number;
+  uploaded: number;
+  uploaded_size: number;
+  reused: number;
+  pending: number;
+  failed: number;
+  deleted_snapshots: number;
+  deleted_blobs: number;
+  snapshot?: string;
+}
+
+// 备份与恢复任务共有的事件日志字段
+export interface GDriveTaskEventLog {
+  events?: GDriveTaskEvent[];
+  // 超出保留上限后被丢弃的最旧事件数
+  events_dropped?: number;
+}
+
+// 备份任务的 private_state
+export interface GDriveBackupTaskState extends GDriveTaskEventLog {
+  phase?: string;
+  started_at?: string;
+  // "plain" 表示不加密
+  key_id?: string;
+  policies?: number[];
+  // 键为从机节点 ID
+  remote?: Record<string, GDriveRemoteNode>;
+  stats?: GDriveBackupStats;
+  // 失败文件，格式为 "[所有者] 路径: 原因"
+  errors?: string[];
+  trigger?: string;
+}
+
+// 恢复任务的 private_state
+export interface GDriveRestoreTaskState extends GDriveTaskEventLog {
+  snapshot_id?: string;
+  snapshot_name?: string;
+  items?: BackupRestoreItem[];
+  // 为空或 0 表示恢复到各自原所有者
+  target_uid?: number;
+  target_dir?: string;
+  phase?: string;
+  total?: number;
+  done?: number;
+  restored?: number;
+  skipped?: number;
+  failed?: number;
+  errors?: string[];
+}

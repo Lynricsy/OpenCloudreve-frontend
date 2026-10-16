@@ -54,6 +54,8 @@ export interface TaskSummary {
     pending?: number;
     deleted_snapshots?: number;
     deleted_blobs?: number;
+    // Google Drive 备份触发方式：cron | manual，旧任务没有
+    trigger?: string;
     // Google Drive 恢复：已恢复文件数
     restored?: number;
   };

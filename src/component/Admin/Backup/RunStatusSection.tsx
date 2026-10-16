@@ -13,6 +13,7 @@ import { DefaultCloseAction } from "../../Common/Snackbar/snackbar";
 import { SecondaryButton, SecondaryLoadingButton, SquareChip } from "../../Common/StyledComponents";
 import TimeBadge from "../../Common/TimeBadge";
 import ArrowClockwise from "../../Icons/ArrowClockwise";
+import HistoryOutlined from "../../Icons/HistoryOutlined";
 import Play from "../../Icons/Play";
 import SettingForm from "../../Pages/Setting/SettingForm";
 import { getGDriveTaskStats, getTaskStatusText } from "../../Pages/Tasks/TaskProps";
@@ -22,9 +23,11 @@ export interface RunStatusSectionProps {
   status?: BackupStatus;
   loading: boolean;
   onRefresh: () => void;
+  // 切换到“运行记录”页签
+  onViewHistory: () => void;
 }
 
-const RunStatusSection = ({ status, loading, onRefresh }: RunStatusSectionProps) => {
+const RunStatusSection = ({ status, loading, onRefresh, onViewHistory }: RunStatusSectionProps) => {
   const { t } = useTranslation("dashboard");
   const dispatch = useAppDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -145,6 +148,9 @@ const RunStatusSection = ({ status, loading, onRefresh }: RunStatusSectionProps)
                   onClick={onRefresh}
                 >
                   {t("backup.refresh")}
+                </SecondaryButton>
+                <SecondaryButton variant="contained" startIcon={<HistoryOutlined />} onClick={onViewHistory}>
+                  {t("backup.viewHistory")}
                 </SecondaryButton>
               </Box>
               <NoMarginHelperText>
