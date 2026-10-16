@@ -9,6 +9,7 @@ interface PinnedItem {
   uri: string;
   name?: string;
   crUri: CrUri;
+  locked?: boolean;
   useElements?: boolean;
 }
 
@@ -22,6 +23,7 @@ export const usePinned = () => {
         return {
           uri: p.uri,
           name: p.name,
+          locked: p.locked,
           crUri: new CrUri(p.uri),
           useElements: p.uri == path_root,
         };
@@ -53,6 +55,7 @@ const Pinned = memo(() => {
           elements={p.useElements ? elements : undefined}
           key={"Pined" + p.uri}
           pinned
+          locked={p.locked}
         />
       ))}
     </>

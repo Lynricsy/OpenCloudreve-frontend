@@ -1053,6 +1053,7 @@
     "pinnedShare": "Share",
     "pinnedDisplayName": "Display name",
     "addPinnedShare": "Add share",
+    "pinnedShareNotFound": "No share found with this ID",
     "allowDownloadShare": "Access shared links",
     "allowDownloadShareDes": "When disabled, users cannot view others' shared links. This setting takes precedence over the sharing link permission settings.",
     "deletedNode": "Deleted node #{{id}}",

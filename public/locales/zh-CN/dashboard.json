@@ -1053,6 +1053,7 @@
     "pinnedShare": "分享",
     "pinnedDisplayName": "展示名称",
     "addPinnedShare": "添加分享",
+    "pinnedShareNotFound": "未找到该 ID 对应的分享",
     "allowDownloadShare": "访问分享链接",
     "allowDownloadShareDes": "关闭后，用户无法查看别人的分享链接。此项设置优先级高于分享链接的权限设置。",
     "deletedNode": "已删除节点 #{{id}}",

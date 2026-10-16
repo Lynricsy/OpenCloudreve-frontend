@@ -1950,7 +1950,7 @@ export function getShareList(args: AdminListService): ThunkResponse<AdminListSha
   };
 }
 
-export function getShareDetail(id: number): ThunkResponse<ShareEnt> {
+export function getShareDetail(id: number, skipSnackbar = false): ThunkResponse<ShareEnt> {
   return async (dispatch, _getState) => {
     return await dispatch(
       send(
@@ -1986,6 +1986,7 @@ export function sendCalibrateUserStorage(id: number): ThunkResponse<UserEnt> {
         { method: "POST" },
         {
           ...defaultOpts,
+          bypassSnackbar: (_e) => skipSnackbar,
         },
       ),
     );

@@ -56,6 +56,12 @@ export interface GroupSetting {
   max_walked_files?: number;
   trash_retention?: number;
   redirected_source?: boolean;
+  default_pinned?: DefaultPinnedShare[];
+}
+
+export interface DefaultPinnedShare {
+  share_id: number;
+  name: string;
 }
 
 export interface AdminListGroupResponse {

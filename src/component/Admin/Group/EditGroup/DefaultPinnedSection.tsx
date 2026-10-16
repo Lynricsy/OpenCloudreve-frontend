@@ -1,5 +1,6 @@
 import { FormControl, Link, Typography } from "@mui/material";
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
+import { DefaultPinnedShare } from "../../../../api/dashboard.ts";
 import { Trans, useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 import SharesInput from "../../Common/SharesInput";
@@ -10,7 +11,19 @@ import { GroupSettingContext } from "./GroupSettingWrapper";
 
 const DefaultPinnedSection = () => {
   const { t } = useTranslation("dashboard");
-  const { values } = useContext(GroupSettingContext);
+  const { values, setGroup } = useContext(GroupSettingContext);
+
+  const onChange = useCallback(
+    (v: DefaultPinnedShare[]) =>
+      setGroup((p) => ({
+        ...p,
+        settings: {
+          ...p.settings,
+          default_pinned: v.length > 0 ? v : undefined,
+        },
+      })),
+    [setGroup],
+  );
 
   if (values?.id == AnonymousGroupID) {
     return null;
@@ -24,7 +37,7 @@ const DefaultPinnedSection = () => {
       <SettingSectionContent>
         <SettingForm lgWidth={5}>
           <FormControl fullWidth>
-            <SharesInput />
+            <SharesInput value={values.settings?.default_pinned ?? []} onChange={onChange} />
             <NoMarginHelperText>
               <Trans
                 i18nKey="group.defaultPinnedDes"

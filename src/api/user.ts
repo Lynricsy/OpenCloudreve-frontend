@@ -36,6 +36,8 @@ export interface Group {
 export interface PinedFile {
   uri: string;
   name?: string;
+  // 来自用户组默认固定的分享，用户无法取消固定
+  locked?: boolean;
 }
 
 export interface PrepareLoginResponse {
