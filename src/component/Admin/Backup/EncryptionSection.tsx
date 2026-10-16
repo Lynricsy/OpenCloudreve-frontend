@@ -12,22 +12,22 @@ import {
 import { useSnackbar } from "notistack";
 import { useContext, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { generateBackupKey } from "../../../../api/api";
-import { BackupPlainKeyID } from "../../../../api/dashboard";
-import type { BackupStatus } from "../../../../api/dashboard";
-import { useAppDispatch } from "../../../../redux/hooks";
-import { confirmOperation } from "../../../../redux/thunks/dialog";
-import { copyToClipboard } from "../../../../util";
-import { Code } from "../../../Common/Code";
-import { DefaultCloseAction } from "../../../Common/Snackbar/snackbar";
-import { DenseFilledTextField, SecondaryLoadingButton } from "../../../Common/StyledComponents";
-import ArrowSync from "../../../Icons/ArrowSync";
-import CopyOutlined from "../../../Icons/CopyOutlined";
-import Eye from "../../../Icons/Eye";
-import EyeOff from "../../../Icons/EyeOff";
-import SettingForm from "../../../Pages/Setting/SettingForm";
-import { NoMarginHelperText, SettingSection, SettingSectionContent } from "../Settings";
-import { SettingContext } from "../SettingWrapper";
+import { generateBackupKey } from "../../../api/api";
+import { BackupPlainKeyID } from "../../../api/dashboard";
+import type { BackupStatus } from "../../../api/dashboard";
+import { useAppDispatch } from "../../../redux/hooks";
+import { confirmOperation } from "../../../redux/thunks/dialog";
+import { copyToClipboard } from "../../../util";
+import { Code } from "../../Common/Code";
+import { DefaultCloseAction } from "../../Common/Snackbar/snackbar";
+import { DenseFilledTextField, SecondaryLoadingButton } from "../../Common/StyledComponents";
+import ArrowSync from "../../Icons/ArrowSync";
+import CopyOutlined from "../../Icons/CopyOutlined";
+import Eye from "../../Icons/Eye";
+import EyeOff from "../../Icons/EyeOff";
+import SettingForm from "../../Pages/Setting/SettingForm";
+import { NoMarginHelperText, SettingSection, SettingSectionContent } from "../Settings/Settings";
+import { SettingContext } from "../Settings/SettingWrapper";
 
 export interface EncryptionSectionProps {
   status?: BackupStatus;

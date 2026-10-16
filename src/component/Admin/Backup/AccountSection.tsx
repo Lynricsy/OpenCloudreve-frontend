@@ -2,22 +2,22 @@ import { Alert, AlertTitle, Box, FormControl, IconButton, InputAdornment, Stack,
 import { useSnackbar } from "notistack";
 import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { disconnectBackupAccount, getBackupOauthUrl, sendSetSetting } from "../../../../api/api";
-import type { BackupStatus } from "../../../../api/dashboard";
-import { useAppDispatch } from "../../../../redux/hooks";
-import { confirmOperation } from "../../../../redux/thunks/dialog";
-import { copyToClipboard, sizeToString } from "../../../../util";
-import FacebookCircularProgress from "../../../Common/CircularProgress";
-import { DefaultCloseAction } from "../../../Common/Snackbar/snackbar";
-import { DenseFilledTextField, SecondaryLoadingButton } from "../../../Common/StyledComponents";
-import CheckCircleFilled from "../../../Icons/CheckCircleFilled";
-import CopyOutlined from "../../../Icons/CopyOutlined";
-import DismissCircleFilled from "../../../Icons/DismissCircleFilled";
-import Eye from "../../../Icons/Eye";
-import EyeOff from "../../../Icons/EyeOff";
-import SettingForm from "../../../Pages/Setting/SettingForm";
-import { NoMarginHelperText, SettingSection, SettingSectionContent } from "../Settings";
-import { SettingContext } from "../SettingWrapper";
+import { disconnectBackupAccount, getBackupOauthUrl, sendSetSetting } from "../../../api/api";
+import type { BackupStatus } from "../../../api/dashboard";
+import { useAppDispatch } from "../../../redux/hooks";
+import { confirmOperation } from "../../../redux/thunks/dialog";
+import { copyToClipboard, sizeToString } from "../../../util";
+import FacebookCircularProgress from "../../Common/CircularProgress";
+import { DefaultCloseAction } from "../../Common/Snackbar/snackbar";
+import { DenseFilledTextField, SecondaryLoadingButton } from "../../Common/StyledComponents";
+import CheckCircleFilled from "../../Icons/CheckCircleFilled";
+import CopyOutlined from "../../Icons/CopyOutlined";
+import DismissCircleFilled from "../../Icons/DismissCircleFilled";
+import Eye from "../../Icons/Eye";
+import EyeOff from "../../Icons/EyeOff";
+import SettingForm from "../../Pages/Setting/SettingForm";
+import { NoMarginHelperText, SettingSection, SettingSectionContent } from "../Settings/Settings";
+import { SettingContext } from "../Settings/SettingWrapper";
 
 export interface AccountSectionProps {
   status?: BackupStatus;

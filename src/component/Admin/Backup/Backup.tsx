@@ -1,14 +1,16 @@
-import { Box, FormControl, FormControlLabel, Link, Stack, Switch, Typography } from "@mui/material";
+import { Box, Container, FormControl, FormControlLabel, Link, Stack, Switch, Typography } from "@mui/material";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { getBackupStatus } from "../../../../api/api";
-import type { BackupStatus } from "../../../../api/dashboard";
-import { useAppDispatch } from "../../../../redux/hooks";
-import { DenseFilledTextField } from "../../../Common/StyledComponents";
-import SettingForm from "../../../Pages/Setting/SettingForm";
-import MultiplePolicySelectionInput from "../../Group/EditGroup/MultiplePolicySelectionInput";
-import { NoMarginHelperText, SettingSection, SettingSectionContent, StyledInputAdornment } from "../Settings";
-import { SettingContext } from "../SettingWrapper";
+import { getBackupStatus } from "../../../api/api";
+import type { BackupStatus } from "../../../api/dashboard";
+import { useAppDispatch } from "../../../redux/hooks";
+import { DenseFilledTextField } from "../../Common/StyledComponents";
+import PageContainer from "../../Pages/PageContainer";
+import PageHeader from "../../Pages/PageHeader";
+import SettingForm from "../../Pages/Setting/SettingForm";
+import MultiplePolicySelectionInput from "../Group/EditGroup/MultiplePolicySelectionInput";
+import { NoMarginHelperText, SettingSection, SettingSectionContent, StyledInputAdornment } from "../Settings/Settings";
+import SettingsWrapper, { SettingContext } from "../Settings/SettingWrapper";
 import AccountSection from "./AccountSection";
 import EncryptionSection from "./EncryptionSection";
 import RunStatusSection from "./RunStatusSection";
@@ -157,4 +159,31 @@ const Backup = () => {
   );
 };
 
-export default Backup;
+// 后台侧边栏“备份”页面：备份相关设置项由 SettingsWrapper 统一读取与保存
+const BackupPage = () => {
+  const { t } = useTranslation("dashboard");
+  return (
+    <PageContainer>
+      <Container maxWidth="xl">
+        <PageHeader title={t("nav.backup")} />
+        <SettingsWrapper
+          settings={[
+            "gdrive_backup_enabled",
+            "gdrive_backup_client_id",
+            "gdrive_backup_client_secret",
+            "gdrive_backup_policies",
+            "gdrive_backup_retention_days",
+            "gdrive_backup_encrypt",
+            "gdrive_backup_key",
+            "gdrive_backup_proxy",
+            "cron_gdrive_backup",
+          ]}
+        >
+          <Backup />
+        </SettingsWrapper>
+      </Container>
+    </PageContainer>
+  );
+};
+
+export default BackupPage;

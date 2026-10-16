@@ -8,6 +8,7 @@ import { GroupPermission } from "../../../api/user.ts";
 import { useAppSelector } from "../../../redux/hooks.ts";
 import SessionManager from "../../../session";
 import { GroupBS } from "../../../session/utils.ts";
+import BackupCloud from "../../Icons/CloudArrowIUp.tsx";
 import BoxMultiple from "../../Icons/BoxMultiple.tsx";
 import BoxMultipleFilled from "../../Icons/BoxMultipleFilled.tsx";
 import CloudDownload from "../../Icons/CloudDownload.tsx";
@@ -146,6 +147,11 @@ AdminNavigationItems = [
     label: "dashboard:nav.nodes",
     icon: [ServerFilled, Server],
     path: "/admin/node",
+  },
+  {
+    label: "dashboard:nav.backup",
+    icon: [BackupCloud, BackupCloud],
+    path: "/admin/backup",
   },
   {
     label: "dashboard:nav.groups",

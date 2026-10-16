@@ -12,23 +12,18 @@ import {
 } from "@mui/material";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getBackupSnapshots } from "../../../../api/api";
-import { BackupPlainKeyID } from "../../../../api/dashboard";
-import type { BackupSnapshot } from "../../../../api/dashboard";
-import { useAppDispatch } from "../../../../redux/hooks";
-import { sizeToString } from "../../../../util";
-import FacebookCircularProgress from "../../../Common/CircularProgress";
-import {
-  NoWrapTableCell,
-  SecondaryButton,
-  SquareChip,
-  StyledTableContainerPaper,
-} from "../../../Common/StyledComponents";
-import TimeBadge from "../../../Common/TimeBadge";
-import ArrowClockwise from "../../../Icons/ArrowClockwise";
-import SettingForm from "../../../Pages/Setting/SettingForm";
-import { NoMarginHelperText, SettingSection, SettingSectionContent } from "../Settings";
-import { SettingContext } from "../SettingWrapper";
+import { getBackupSnapshots } from "../../../api/api";
+import { BackupPlainKeyID } from "../../../api/dashboard";
+import type { BackupSnapshot } from "../../../api/dashboard";
+import { useAppDispatch } from "../../../redux/hooks";
+import { sizeToString } from "../../../util";
+import FacebookCircularProgress from "../../Common/CircularProgress";
+import { NoWrapTableCell, SecondaryButton, SquareChip, StyledTableContainerPaper } from "../../Common/StyledComponents";
+import TimeBadge from "../../Common/TimeBadge";
+import ArrowClockwise from "../../Icons/ArrowClockwise";
+import SettingForm from "../../Pages/Setting/SettingForm";
+import { NoMarginHelperText, SettingSection, SettingSectionContent } from "../Settings/Settings";
+import { SettingContext } from "../Settings/SettingWrapper";
 import RestoreDialog from "./RestoreDialog";
 
 export interface SnapshotSectionProps {

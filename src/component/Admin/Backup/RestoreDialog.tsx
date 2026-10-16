@@ -20,32 +20,32 @@ import dayjs from "dayjs";
 import { useSnackbar } from "notistack";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { browseBackupSnapshot, restoreBackup } from "../../../../api/api";
+import { browseBackupSnapshot, restoreBackup } from "../../../api/api";
 import type {
   BackupRestoreItem,
   BackupSnapshot,
   BackupSnapshotEntry,
   BackupSnapshotUser,
-} from "../../../../api/dashboard";
-import { useAppDispatch } from "../../../../redux/hooks";
-import { sizeToString } from "../../../../util";
-import FacebookCircularProgress from "../../../Common/CircularProgress";
-import { DefaultCloseAction } from "../../../Common/Snackbar/snackbar";
+} from "../../../api/dashboard";
+import { useAppDispatch } from "../../../redux/hooks";
+import { sizeToString } from "../../../util";
+import FacebookCircularProgress from "../../Common/CircularProgress";
+import { DefaultCloseAction } from "../../Common/Snackbar/snackbar";
 import {
   DenseFilledTextField,
   NoWrapTableCell,
   StyledCheckbox,
   StyledTableContainerPaper,
-} from "../../../Common/StyledComponents";
-import TimeBadge from "../../../Common/TimeBadge";
-import DraggableDialog from "../../../Dialogs/DraggableDialog";
-import ChevronRight from "../../../Icons/ChevronRight";
-import Document from "../../../Icons/Document";
-import Folder from "../../../Icons/Folder";
-import People from "../../../Icons/People";
-import Person from "../../../Icons/Person";
-import SettingForm from "../../../Pages/Setting/SettingForm";
-import { NoMarginHelperText } from "../Settings";
+} from "../../Common/StyledComponents";
+import TimeBadge from "../../Common/TimeBadge";
+import DraggableDialog from "../../Dialogs/DraggableDialog";
+import ChevronRight from "../../Icons/ChevronRight";
+import Document from "../../Icons/Document";
+import Folder from "../../Icons/Folder";
+import People from "../../Icons/People";
+import Person from "../../Icons/Person";
+import SettingForm from "../../Pages/Setting/SettingForm";
+import { NoMarginHelperText } from "../Settings/Settings";
 
 export interface RestoreDialogProps {
   open: boolean;
