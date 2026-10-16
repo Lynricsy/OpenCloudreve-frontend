@@ -46,7 +46,7 @@ const DirectLinkItem = memo(
           variant="small"
           iconProps={{ fontSize: "small" }}
           file={{
-            type: FileType.file,
+            type: target.folder ? FileType.folder : FileType.file,
             name: displayName ?? "",
           }}
         />
@@ -65,6 +65,13 @@ const DirectLinkItem = memo(
           >
             {displayLink}
           </Typography>
+          {target.folder && (
+            <Typography variant="caption" color="text.secondary" component="div" sx={{ whiteSpace: "normal" }}>
+              {t("application:fileManager.folderDirectLinkHint", {
+                example: `${displayLink}/${relativePathPlaceholder}`,
+              })}
+            </Typography>
+          )}
         </Box>
         <Tooltip title={t("application:fileManager.copy")}>
           <IconButton size="small" onClick={handleCopy} sx={{ flexShrink: 0 }}>

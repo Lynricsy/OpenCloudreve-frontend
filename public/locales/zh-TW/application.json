@@ -246,6 +246,7 @@
     "permanentValid": "永久有效",
     "manageShares": "管理分享連結",
     "manageDirectLinks": "管理直鏈",
+    "folderDirectLinkHint": "在連結末尾追加相對路徑可存取目錄內檔案，例如 {{example}}",
     "deleteLinkConfirm": "確定要刪除此直鏈嗎？",
     "directLinkNotFound": "你查找的直鏈已經不存在。",
     "versionNotFound": "你查找的版本已經不存在。",

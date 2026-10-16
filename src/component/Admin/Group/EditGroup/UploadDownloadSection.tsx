@@ -56,6 +56,10 @@ const UploadDownloadSection = () => {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setGroup((p: GroupEnt) => ({
         ...p,
+        // 目录直链仅支持重定向型直链，关闭重定向时一并关闭目录直链
+        permissions: e.target.checked
+          ? p.permissions
+          : new Boolset(p.permissions).set(GroupPermission.folder_direct_link, false).toString(),
         settings: { ...p.settings, redirected_source: e.target.checked ? true : undefined },
       }));
     },
@@ -74,6 +78,16 @@ const UploadDownloadSection = () => {
       setGroup((p: GroupEnt) => ({
         ...p,
         permissions: new Boolset(p.permissions).set(GroupPermission.unique_direct_link, !e.target.checked).toString(),
+      }));
+    },
+    [setGroup],
+  );
+
+  const onFolderDirectLinkChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setGroup((p: GroupEnt) => ({
+        ...p,
+        permissions: new Boolset(p.permissions).set(GroupPermission.folder_direct_link, e.target.checked).toString(),
       }));
     },
     [setGroup],
@@ -162,7 +176,15 @@ const UploadDownloadSection = () => {
                   </SettingForm>
                   <SettingForm lgWidth={5}>
                     <FormControl fullWidth>
-                      <FormControlLabel control={<Switch checked={false} />} label={t("group.folderDirectLink")} />
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={permission.enabled(GroupPermission.folder_direct_link)}
+                            onChange={onFolderDirectLinkChange}
+                          />
+                        }
+                        label={t("group.folderDirectLink")}
+                      />
                       <NoMarginHelperText>{t("group.folderDirectLinkDes")}</NoMarginHelperText>
                     </FormControl>
                   </SettingForm>

@@ -485,6 +485,8 @@ export interface DeleteUploadSessionService {
 export interface DirectLink {
   file_url: string;
   link: string;
+  // 前端标记：该直链为目录直链（可追加相对路径访问目录内文件），后端不返回此字段
+  folder?: boolean;
 }
 
 export interface PatchViewSyncService {

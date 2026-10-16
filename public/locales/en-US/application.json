@@ -245,6 +245,7 @@
     "permanentValid": "Permanent",
     "manageShares": "Manage share links",
     "manageDirectLinks": "Manage direct links",
+    "folderDirectLinkHint": "Append a relative path to the link to access files inside this folder, e.g. {{example}}",
     "deleteLinkConfirm": "Are you sure to delete this direct link?",
     "directLinkNotFound": "The direct link you are looking for does not exist.",
     "versionNotFound": "The version you are looking for does not exist.",

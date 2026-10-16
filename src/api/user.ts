@@ -94,6 +94,7 @@ export const GroupPermission = {
   select_node: 10,
   redirected_source: 11,
   advance_delete: 12,
+  folder_direct_link: 14,
   unique_direct_link: 17,
 };
 

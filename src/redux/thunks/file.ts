@@ -30,6 +30,7 @@ import {
   Viewer,
 } from "../../api/explorer.ts";
 import { AppError, Response } from "../../api/request.ts";
+import { GroupPermission } from "../../api/user.ts";
 import { DefaultCloseAction, ViewDstAction } from "../../component/Common/Snackbar/snackbar.tsx";
 import { canShowInfo, getActionOpt } from "../../component/FileManager/ContextMenu/useActionDisplayOpt.ts";
 import { DeleteOption } from "../../component/FileManager/Dialogs/DeleteConfirmation.tsx";
@@ -1332,6 +1333,16 @@ export function refreshSingleFileSymbolicLinks(file: FileResponse): AppThunk<Pro
 
 function startBatchGetDirectLinks(files: FileResponse[]): AppThunk<Promise<DirectLink[]>> {
   return async (dispatch, _getState): Promise<DirectLink[]> => {
+    // 单个目录且用户组允许目录直链时，直接生成目录直链，不再遍历目录内文件
+    if (
+      files.length == 1 &&
+      files[0].type == FileType.folder &&
+      SessionManager.currentUserGroupPermission().enabled(GroupPermission.folder_direct_link)
+    ) {
+      const links = await dispatch(getFileDirectLinks({ uris: [getFileLinkedUri(files[0])] }));
+      return links.map((link) => ({ ...link, folder: true }));
+    }
+
     const allFiles: FileResponse[] = [];
     const currentUser = SessionManager.currentUserGroup();
     const batchLimit = currentUser?.direct_link_batch_size ?? 0;
