@@ -530,3 +530,103 @@ export interface ListOAuthClientResponse {
 export interface UpsertOAuthClientService {
   client: OAuthClient;
 }
+
+// Google Drive 备份：单次备份任务的统计摘要
+export interface BackupSummary {
+  files: number;
+  size: number;
+  uploaded: number;
+  uploaded_size: number;
+  reused: number;
+  pending: number;
+  failed: number;
+  deleted_snapshots: number;
+  deleted_blobs: number;
+  errors?: string[];
+}
+
+export interface BackupLastTask {
+  status: string;
+  created_at: string;
+  updated_at: string;
+  error?: string;
+  summary: BackupSummary;
+}
+
+export interface BackupStatus {
+  redirect_uri: string;
+  // 是否已保存刷新令牌
+  authorized: boolean;
+  account?: {
+    email: string;
+    name: string;
+  };
+  // limit 为 0 表示无上限
+  quota?: {
+    limit: number;
+    usage: number;
+  };
+  account_error?: string;
+  // 当前加密公钥（age1…），未开启加密时为 "plain"
+  key_id: string;
+  running: boolean;
+  last_task?: BackupLastTask;
+}
+
+export const BackupPlainKeyID = "plain";
+
+export interface GenerateBackupKeyResponse {
+  key: string;
+  key_id: string;
+}
+
+export interface BackupSnapshot {
+  id: string;
+  name: string;
+  created_at: string;
+  files: number;
+  size: number;
+  key_id: string;
+  // false 表示需要其他密钥才能读取
+  readable: boolean;
+}
+
+export interface BrowseBackupSnapshotService {
+  snapshot_id: string;
+  uid?: number;
+  path?: string;
+}
+
+export interface BackupSnapshotUser {
+  uid: number;
+  owner: string;
+  files: number;
+  size: number;
+}
+
+export interface BackupSnapshotEntry {
+  name: string;
+  path: string;
+  is_dir: boolean;
+  size: number;
+  files: number;
+  modified_at?: string;
+}
+
+export interface BrowseBackupSnapshotResponse {
+  users?: BackupSnapshotUser[];
+  entries?: BackupSnapshotEntry[];
+}
+
+export interface BackupRestoreItem {
+  uid: number;
+  path: string;
+}
+
+export interface RestoreBackupService {
+  snapshot_id: string;
+  items: BackupRestoreItem[];
+  // 省略或 0 表示恢复到各自原所有者
+  target_uid?: number;
+  target_dir: string;
+}

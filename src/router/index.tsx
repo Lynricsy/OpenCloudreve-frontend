@@ -98,6 +98,14 @@ export const router = createBrowserRouter([
                   return { Component: Settings };
                 },
               },
+              // 与其他管理页一致：按路由懒加载以拆分代码包，因此使用动态 import
+              {
+                path: "backup/oauth",
+                async lazy() {
+                  let { BackupOauthCallback } = await import("../component/Admin/AdminBundle.tsx");
+                  return { Component: BackupOauthCallback };
+                },
+              },
 
               {
                 path: "policy",

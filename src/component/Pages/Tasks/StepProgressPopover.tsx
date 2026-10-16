@@ -25,6 +25,8 @@ export const ProgressKeys = {
   imported: "imported",
   indexed: "indexed",
   rebuild_index: "rebuild_index",
+  backup: "backup",
+  restore: "restore",
 };
 
 const ProgressBar = ({ pkey, p }: { pkey: string; p: TaskProgress }) => {
@@ -161,6 +163,27 @@ const ProgressBar = ({ pkey, p }: { pkey: string; p: TaskProgress }) => {
     return (
       <StepProgressBar
         title={t("setting.ftsIndexedFiles")}
+        secondary={`${p.current} / ${p.total}`}
+        progress={(100 * p.current) / Math.max(p.total, 1)}
+      />
+    );
+  }
+
+  if (pkey == ProgressKeys.backup) {
+    return (
+      <StepProgressBar
+        indeterminate={p.total == 0}
+        title={t("setting.gdriveBackupProcessedFiles")}
+        secondary={p.total > 0 ? `${p.current} / ${p.total}` : `${p.current}`}
+        progress={(100 * p.current) / Math.max(p.total, 1)}
+      />
+    );
+  }
+
+  if (pkey == ProgressKeys.restore) {
+    return (
+      <StepProgressBar
+        title={t("setting.gdriveRestoredFiles")}
         secondary={`${p.current} / ${p.total}`}
         progress={(100 * p.current) / Math.max(p.total, 1)}
       />

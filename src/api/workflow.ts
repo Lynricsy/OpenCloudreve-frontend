@@ -43,6 +43,19 @@ export interface TaskSummary {
     relocated?: number;
     skipped?: number;
     download?: DownloadTaskStatus;
+    // Google Drive 备份/恢复：快照名
+    snapshot?: string;
+    // Google Drive 备份统计
+    files?: number;
+    size?: number;
+    uploaded?: number;
+    uploaded_size?: number;
+    reused?: number;
+    pending?: number;
+    deleted_snapshots?: number;
+    deleted_blobs?: number;
+    // Google Drive 恢复：已恢复文件数
+    restored?: number;
   };
 }
 
@@ -144,6 +157,8 @@ export enum TaskType {
   full_text_change_owner = "full_text_change_owner",
   full_text_delete = "full_text_delete",
   full_text_rebuild = "full_text_rebuild",
+  gdrive_backup = "gdrive_backup",
+  gdrive_restore = "gdrive_restore",
 }
 
 export enum TaskStatus {

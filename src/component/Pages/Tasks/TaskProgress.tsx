@@ -213,6 +213,47 @@ const stepOptions: {
       },
     ],
   ],
+  [TaskType.gdrive_backup]: [
+    // Master
+    [
+      queueingStep,
+      {
+        title: "setting.gdriveBackupScanning",
+        state: "scan",
+        description: "setting.gdriveBackupScanningDes",
+        supportProgress: true,
+      },
+      {
+        title: "setting.gdriveBackupRemote",
+        state: "remote",
+        description: "setting.gdriveBackupRemoteDes",
+        supportProgress: true,
+      },
+      {
+        title: "setting.gdriveBackupManifest",
+        state: "manifest",
+        description: "setting.gdriveBackupManifestDes",
+      },
+      {
+        title: "setting.gdriveBackupGC",
+        state: "gc",
+        description: "setting.gdriveBackupGCDes",
+      },
+    ],
+  ],
+  [TaskType.gdrive_restore]: [
+    // Master
+    [
+      queueingStep,
+      {
+        title: "setting.gdriveRestoring",
+        state: "",
+        description: "setting.gdriveRestoringDes",
+        supportProgress: true,
+      },
+      completedStep,
+    ],
+  ],
 };
 
 const TaskProgress = ({ taskId, taskStatus, taskType, summary, node }: TaskProgressProps) => {

@@ -5,7 +5,7 @@ import { TFunction } from "i18next";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { FileType } from "../../../api/explorer.ts";
-import { TaskResponse, TaskStatus, TaskType } from "../../../api/workflow.ts";
+import { TaskResponse, TaskStatus, TaskSummary, TaskType } from "../../../api/workflow.ts";
 import { sizeToString } from "../../../util";
 import { formatDuration } from "../../../util/datetime.ts";
 import TimeBadge from "../../Common/TimeBadge.tsx";
@@ -64,6 +64,43 @@ export const getTaskStatusText = (status: TaskStatus, t: TFunction) => {
     default:
       return t("application:uplaoder.unknownStatus");
   }
+};
+
+// Google Drive 备份/恢复任务的统计项，用户任务详情与管理员任务详情共用
+export const getGDriveTaskStats = (
+  type: string | undefined,
+  summary: TaskSummary | undefined,
+  t: TFunction,
+): { label: string; value: React.ReactNode }[] => {
+  const props = summary?.props;
+  // 快照名在备份完成后才有，未生成时不显示该项
+  const snapshot = props?.snapshot ? [{ label: t("application:setting.gdriveSnapshot"), value: props.snapshot }] : [];
+  if (type == TaskType.gdrive_backup) {
+    return [
+      ...snapshot,
+      { label: t("application:setting.gdriveFiles"), value: props?.files ?? 0 },
+      { label: t("application:setting.gdriveSize"), value: sizeToString(props?.size ?? 0) },
+      {
+        label: t("application:setting.gdriveUploaded"),
+        value: `${props?.uploaded ?? 0} (${sizeToString(props?.uploaded_size ?? 0)})`,
+      },
+      { label: t("application:setting.gdriveReused"), value: props?.reused ?? 0 },
+      { label: t("application:setting.gdrivePending"), value: props?.pending ?? 0 },
+      { label: t("application:setting.gdriveFailed"), value: props?.failed ?? 0 },
+      { label: t("application:setting.gdriveDeletedSnapshots"), value: props?.deleted_snapshots ?? 0 },
+      { label: t("application:setting.gdriveDeletedBlobs"), value: props?.deleted_blobs ?? 0 },
+    ];
+  }
+  if (type == TaskType.gdrive_restore) {
+    return [
+      ...snapshot,
+      { label: t("application:setting.gdriveRestoreTotal"), value: props?.total ?? 0 },
+      { label: t("application:setting.gdriveRestored"), value: props?.restored ?? 0 },
+      { label: t("application:setting.gdriveRestoreSkipped"), value: props?.skipped ?? 0 },
+      { label: t("application:setting.gdriveFailed"), value: props?.failed ?? 0 },
+    ];
+  }
+  return [];
 };
 
 const TaskProps = ({ task }: TaskPropsProps) => {
@@ -167,6 +204,9 @@ const TaskProps = ({ task }: TaskPropsProps) => {
           <TaskPropsBlock label={t("setting.skippedEntities")} value={task.summary?.props.skipped ?? 0} />
         </>
       )}
+      {getGDriveTaskStats(task.type, task.summary, t).map((stat) => (
+        <TaskPropsBlock key={stat.label} label={stat.label} value={stat.value} />
+      ))}
       <TaskPropsBlock label={t("setting.executeDuration")} value={formatDuration(dayjs.duration(task.duration ?? 0))} />
       {task.resume_time && (task.status == TaskStatus.suspending || task.status == TaskStatus.processing) && (
         <TaskPropsBlock

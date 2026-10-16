@@ -135,6 +135,8 @@ const TaskFilterPopover = ({
               TaskType.full_text_copy,
               TaskType.full_text_change_owner,
               TaskType.full_text_delete,
+              TaskType.gdrive_backup,
+              TaskType.gdrive_restore,
             ].map((type) => (
               <SquareMenuItem key={type} value={type}>
                 <ListItemText

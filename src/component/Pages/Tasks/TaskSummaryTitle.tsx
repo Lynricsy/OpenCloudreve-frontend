@@ -142,6 +142,20 @@ const TaskSummaryTitle = ({ type, summary, isInDashboard = false }: TaskSummaryT
           })}
         </Typography>
       );
+    case TaskType.gdrive_backup:
+      return (
+        <Typography variant={"inherit"}>
+          {summary?.props.snapshot
+            ? t("setting.gdriveBackupToSnapshot", { snapshot: summary.props.snapshot })
+            : t("setting.gdriveBackup")}
+        </Typography>
+      );
+    case TaskType.gdrive_restore:
+      return (
+        <Typography variant={"inherit"}>
+          {t("setting.gdriveRestoreFromSnapshot", { snapshot: summary?.props.snapshot ?? "-" })}
+        </Typography>
+      );
     default:
       return (
         <Trans

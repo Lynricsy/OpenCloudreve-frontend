@@ -7,6 +7,7 @@ import { QueueType } from "../../../api/dashboard.ts";
 import ResponsiveTabs, { Tab } from "../../Common/ResponsiveTabs.tsx";
 import Bot from "../../Icons/Bot.tsx";
 import Color from "../../Icons/Color.tsx";
+import CloudArrowIUp from "../../Icons/CloudArrowIUp.tsx";
 import CubeSync from "../../Icons/CubeSync.tsx";
 import FilmstripImage from "../../Icons/FilmstripImage.tsx";
 import Globe from "../../Icons/Globe.tsx";
@@ -16,6 +17,7 @@ import Server from "../../Icons/Server.tsx";
 import PageContainer from "../../Pages/PageContainer.tsx";
 import PageHeader, { PageTabQuery } from "../../Pages/PageHeader.tsx";
 import Appearance from "./Appearance/Appearance.tsx";
+import Backup from "./Backup/Backup.tsx";
 import Captcha from "./Captcha/Captcha.tsx";
 import Email from "./Email/Email.tsx";
 import Media from "./Media/Media.tsx";
@@ -71,6 +73,7 @@ export enum SettingsPageTab {
   Queue = "queue",
   Appearance = "appearance",
   Server = "server",
+  Backup = "backup",
 }
 
 const Settings = () => {
@@ -120,6 +123,11 @@ const Settings = () => {
           label: t("nav.server"),
           value: SettingsPageTab.Server,
           icon: <Server />,
+        },
+        {
+          label: t("nav.backup"),
+          value: SettingsPageTab.Backup,
+          icon: <CloudArrowIUp />,
         },
       ],
     );
@@ -310,6 +318,23 @@ const Settings = () => {
                   ]}
                 >
                   <ServerSetting />
+                </SettingsWrapper>
+              )}
+              {tab === SettingsPageTab.Backup && (
+                <SettingsWrapper
+                  settings={[
+                    "gdrive_backup_enabled",
+                    "gdrive_backup_client_id",
+                    "gdrive_backup_client_secret",
+                    "gdrive_backup_policies",
+                    "gdrive_backup_retention_days",
+                    "gdrive_backup_encrypt",
+                    "gdrive_backup_key",
+                    "gdrive_backup_proxy",
+                    "cron_gdrive_backup",
+                  ]}
+                >
+                  <Backup />
                 </SettingsWrapper>
               )}
             </Box>

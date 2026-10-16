@@ -4,6 +4,10 @@ import i18n from "../i18n.ts";
 import {
   AdminListGroupResponse,
   AdminListService,
+  BackupSnapshot,
+  BackupStatus,
+  BrowseBackupSnapshotResponse,
+  BrowseBackupSnapshotService,
   ListShareResponse as AdminListShareResponse,
   StoragePolicy as AdminStoragePolicy,
   BatchIDService,
@@ -13,6 +17,7 @@ import {
   FetchWOPIDiscoveryService,
   File as FileEnt,
   FinishOauthCallbackService,
+  GenerateBackupKeyResponse,
   GetOAuthClientResponse,
   GetOauthRedirectService,
   GetSettingService,
@@ -40,6 +45,7 @@ import {
   UpsertNodeService,
   UpsertOAuthClientService,
   UpsertStoragePolicyService,
+  RestoreBackupService,
   UpsertUserService,
   User as UserEnt,
 } from "./dashboard.ts";
@@ -1659,6 +1665,133 @@ export function getOneDriveDriverRoot(id: number, url: string): ThunkResponse<st
       send(
         `/admin/policy/oauth/root/${id}`,
         { method: "GET", params: { url } },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
+// Google Drive 备份
+export function getBackupStatus(): ThunkResponse<BackupStatus> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        `/admin/backup/status`,
+        { method: "GET" },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
+export function getBackupOauthUrl(): ThunkResponse<string> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        `/admin/backup/oauth/signin`,
+        { method: "POST", data: {} },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
+export function finishBackupOauthCallback(args: FinishOauthCallbackService): ThunkResponse<void> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        `/admin/backup/oauth/callback`,
+        { method: "POST", data: args },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
+export function disconnectBackupAccount(): ThunkResponse<void> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        `/admin/backup/oauth`,
+        { method: "DELETE" },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
+export function generateBackupKey(): ThunkResponse<GenerateBackupKeyResponse> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        `/admin/backup/key`,
+        { method: "POST", data: {} },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
+export function runBackup(): ThunkResponse<void> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        `/admin/backup/run`,
+        { method: "POST", data: {} },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
+export function getBackupSnapshots(): ThunkResponse<BackupSnapshot[]> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        `/admin/backup/snapshots`,
+        { method: "GET" },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
+export function browseBackupSnapshot(args: BrowseBackupSnapshotService): ThunkResponse<BrowseBackupSnapshotResponse> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        `/admin/backup/snapshots/browse`,
+        { method: "POST", data: args },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
+export function restoreBackup(args: RestoreBackupService): ThunkResponse<void> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        `/admin/backup/restore`,
+        { method: "POST", data: args },
         {
           ...defaultOpts,
         },

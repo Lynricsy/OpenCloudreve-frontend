@@ -30,7 +30,7 @@ import FileBadge from "../../../FileManager/FileBadge";
 import SettingForm from "../../../Pages/Setting/SettingForm";
 import DownloadFileList from "../../../Pages/Tasks/DownloadFileList";
 import TaskProgress from "../../../Pages/Tasks/TaskProgress";
-import { getTaskStatusText } from "../../../Pages/Tasks/TaskProps";
+import { getGDriveTaskStats, getTaskStatusText } from "../../../Pages/Tasks/TaskProps";
 import UserDialog from "../../User/UserDialog/UserDialog";
 import { processTaskContent, userTaskTypes } from "../TaskContent";
 import BlobErrors from "./BlobErrors";
@@ -215,6 +215,14 @@ const TaskForm = ({ values }: { values: Task }) => {
               />
             </SettingForm>
           )}
+
+          {getGDriveTaskStats(values.type, values.summary, t).map((stat) => (
+            <SettingForm key={stat.label} title={stat.label} noContainer lgWidth={2}>
+              <Typography variant={"body2"} color={"textSecondary"}>
+                {stat.value}
+              </Typography>
+            </SettingForm>
+          ))}
 
           {values?.public_state?.error && (
             <SettingForm title={t("task.errorMsg")} noContainer lgWidth={12}>

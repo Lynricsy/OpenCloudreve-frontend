@@ -8,6 +8,7 @@ import EditNode from "./Node/EditNode";
 import NodeSetting from "./Node/NodeSetting";
 import EditOAuthClient from "./OAuthClient/EditOAuthClient/EditOAuthClient";
 import OAuthClientSetting from "./OAuthClient/OAuthClientSetting";
+import BackupOauthCallback from "./Settings/Backup/BackupOauthCallback";
 import Settings from "./Settings/Settings";
 import ShareList from "./Share/ShareList";
 import EditStoragePolicy from "./StoragePolicy/EditStoragePolicy/EditStoragePolicy";
@@ -17,6 +18,7 @@ import TaskList from "./Task/TaskList";
 import UserSetting from "./User/UserSetting";
 
 export {
+  BackupOauthCallback,
   EditGroup,
   EditNode,
   EditOAuthClient,
