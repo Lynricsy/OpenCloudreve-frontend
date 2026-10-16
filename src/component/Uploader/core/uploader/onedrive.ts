@@ -66,7 +66,7 @@ export default class OneDrive extends Chunk {
     }
   }
 
-  protected async afterUpload(): Promise<any> {
+  public async afterUpload(): Promise<any> {
     this.logger.info(`Finishing upload...`);
     this.transit(Status.finishing);
     return finishOneDriveUpload(this.task.session!.session_id, this.task.session!.callback_secret);

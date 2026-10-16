@@ -232,6 +232,12 @@ export interface PolicySetting {
   qiniu_upload_cdn?: boolean;
   chunk_concurrency?: number;
   encryption?: boolean;
+  lb_children?: LoadBalanceChild[];
+}
+
+export interface LoadBalanceChild {
+  id: number;
+  weight: number;
 }
 
 export interface User extends CommonMixin {

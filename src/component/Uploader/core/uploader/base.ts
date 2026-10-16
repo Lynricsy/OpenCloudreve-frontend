@@ -135,6 +135,7 @@ export default abstract class Base {
   public run = async () => {
     this.logger.info("Start upload task, create upload session...");
     this.transit(Status.preparing);
+    this.beforeSession();
     const cachedInfo = utils.getResumeCtx(this.task, this.logger);
     if (cachedInfo == null) {
       const crUri = new CrUri(this.task.dst);
@@ -160,6 +161,8 @@ export default abstract class Base {
       this.logger.info("Resume upload from cached ctx:", cachedInfo);
     }
 
+    this.afterSession();
+
     if (this.task.session?.encrypt_metadata && !this.task.policy?.relay) {
       // Check browser support for encryption
       if (!("crypto" in window)) {
@@ -183,8 +186,23 @@ export default abstract class Base {
   };
 
   public abstract upload(): Promise<any>;
-  protected async afterUpload(): Promise<any> {
+  public async afterUpload(): Promise<any> {
     return;
+  }
+
+  // 创建（或从缓存恢复）上传会话之前调用，子类可在此重置任务状态
+  protected beforeSession(): void {
+    return;
+  }
+
+  // 上传会话就绪之后、开始传输之前调用，子类可据此调整任务（如解析实际存储策略）
+  protected afterSession(): void {
+    return;
+  }
+
+  // 中止当前进行中的请求，不删除上传会话也不改变状态
+  public abortRequests() {
+    this.cancelToken.cancel();
   }
 
   public cancel = async () => {
@@ -192,7 +210,7 @@ export default abstract class Base {
       return;
     }
 
-    this.cancelToken.cancel();
+    this.abortRequests();
     await this.cancelUploadSession();
     this.transit(Status.canceled);
   };

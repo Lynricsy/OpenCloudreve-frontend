@@ -17,7 +17,7 @@ export default class KS3 extends Chunk {
     this.task.chunkProgress[chunkInfo.index].etag = etag;
   }
 
-  protected async afterUpload(): Promise<any> {
+  public async afterUpload(): Promise<any> {
     this.logger.info(`Finishing multipart upload...`);
     this.transit(Status.finishing);
     await s3LikeFinishUpload(this.task.session!.completeURL, false, this.task.chunkProgress, this.cancelToken.token);

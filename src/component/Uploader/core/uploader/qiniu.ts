@@ -17,7 +17,7 @@ export default class Qiniu extends Chunk {
     this.task.chunkProgress[chunkInfo.index].etag = chunkRes.etag;
   }
 
-  protected async afterUpload(): Promise<any> {
+  public async afterUpload(): Promise<any> {
     this.logger.info(`Finishing multipart upload...`);
     this.transit(Status.finishing);
     return qiniuFinishUpload(

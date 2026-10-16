@@ -22,6 +22,7 @@ import SelectProvider from "./SelectProvider";
 import StoragePolicyCard from "./StoragePolicyCard";
 import CosWizard from "./Wizards/COS/CosWizard";
 import LocalWizard from "./Wizards/Local/LocalWizard";
+import LoadBalanceWizard from "./Wizards/LoadBalance/LoadBalanceWizard";
 import ObsWizard from "./Wizards/OBS/ObsWizard";
 import OneDriveWizard from "./Wizards/OneDrive/OneDriveWizard";
 import OssWizard from "./Wizards/OSS/OssWizard";
@@ -77,6 +78,7 @@ export const PolicyPropsMap: Record<PolicyType, PolicyProps> = {
     name: "policy.load_balance",
     img: "/static/img/lb.svg",
     wizardSize: "sm",
+    wizard: LoadBalanceWizard,
   },
   [PolicyType.remote]: {
     name: "policy.remote",

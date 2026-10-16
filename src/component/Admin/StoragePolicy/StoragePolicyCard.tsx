@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { deleteStoragePolicy, getStoragePolicyDetail } from "../../../api/api";
 import { StoragePolicy } from "../../../api/dashboard";
+import { PolicyType } from "../../../api/explorer";
 import { useAppDispatch } from "../../../redux/hooks";
 import { confirmOperation } from "../../../redux/thunks/dialog";
 import { sizeToString } from "../../../util";
@@ -129,6 +130,8 @@ const StoragePolicyCard = ({ policy, onRefresh, loading }: StoragePolicyCardProp
           {policy && (
             <Typography variant="body2" color="text.secondary">
               {t(PolicyPropsMap[policy.type].name)}
+              {policy.type === PolicyType.load_balance &&
+                ` · ${t("policy.xChildPolicies", { count: policy.settings?.lb_children?.length ?? 0 })}`}
             </Typography>
           )}
         </Box>

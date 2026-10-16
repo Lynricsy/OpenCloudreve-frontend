@@ -36,7 +36,9 @@ function isTask(toBeDetermined: Task | string): toBeDetermined is Task {
 
 export function getResumeCtxKey(task: Task | string): string {
   if (isTask(task)) {
-    return `${resumeKeyPrefix}name_${task.name}_dst_${task.dst}_size_${task.size}_policy_${task.policy.id}`;
+    // 负载均衡任务以派发时的负载均衡策略作为键，保证重新选择同一文件时能恢复
+    const policyId = task.lbPolicy?.id ?? task.policy.id;
+    return `${resumeKeyPrefix}name_${task.name}_dst_${task.dst}_size_${task.size}_policy_${policyId}`;
   }
 
   return task;

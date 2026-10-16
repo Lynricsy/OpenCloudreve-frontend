@@ -16,7 +16,7 @@ export default class OBS extends Chunk {
     this.task.chunkProgress[chunkInfo.index].etag = etag;
   }
 
-  protected async afterUpload(): Promise<any> {
+  public async afterUpload(): Promise<any> {
     this.logger.info(`Finishing multipart upload...`);
     this.transit(Status.finishing);
     return obsFinishUpload(this.task.session!.completeURL, this.task.chunkProgress, this.cancelToken.token);

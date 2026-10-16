@@ -2,10 +2,12 @@ import { Alert, Box, Link, Stack } from "@mui/material";
 import { useContext } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
+import { PolicyType } from "../../../../api/explorer";
 import {
   BasicInfoSection,
   DownloadSection,
   EncryptionSection,
+  LoadBalanceSection,
   MediaMetadataSection,
   StorageAndUploadSection,
   ThumbnailsSection,
@@ -29,11 +31,18 @@ const StoragePolicyForm = () => {
       )}
       <Stack spacing={5}>
         <BasicInfoSection />
-        <StorageAndUploadSection />
-        <DownloadSection />
-        <ThumbnailsSection />
-        <MediaMetadataSection />
-        <EncryptionSection />
+        {values.type === PolicyType.load_balance ? (
+          // 负载均衡策略自身不存储数据，只需配置子策略
+          <LoadBalanceSection />
+        ) : (
+          <>
+            <StorageAndUploadSection />
+            <DownloadSection />
+            <ThumbnailsSection />
+            <MediaMetadataSection />
+            <EncryptionSection />
+          </>
+        )}
       </Stack>
     </Box>
   );
