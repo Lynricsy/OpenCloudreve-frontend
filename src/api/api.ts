@@ -2012,6 +2012,7 @@ export function getShareDetail(id: number, skipSnackbar = false): ThunkResponse<
         { method: "GET" },
         {
           ...defaultOpts,
+          bypassSnackbar: (_e) => skipSnackbar,
         },
       ),
     );
@@ -2040,7 +2041,6 @@ export function sendCalibrateUserStorage(id: number): ThunkResponse<UserEnt> {
         { method: "POST" },
         {
           ...defaultOpts,
-          bypassSnackbar: (_e) => skipSnackbar,
         },
       ),
     );
