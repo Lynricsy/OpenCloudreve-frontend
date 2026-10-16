@@ -44,6 +44,8 @@ export enum SelectType {
   Directory,
 }
 
+export type UploaderClass = new (task: Task, manager: UploadManager) => Base;
+
 export default class UploadManager {
   public logger: Logger;
   public pool: Pool;
@@ -101,38 +103,43 @@ export default class UploadManager {
   };
 
   dispatchUploader(task: Task): Base {
+    return new (this.uploaderClassFor(task))(task, this);
+  }
+
+  // 根据任务类型与存储策略决定上传器实现
+  uploaderClassFor(task: Task): UploaderClass {
     if (task.type == TaskType.resumeHint) {
-      return new ResumeHint(task, this);
+      return ResumeHint;
     }
 
     if (task.policy.relay) {
       this.logger.info("Upload relay is enabled, cast to local uploader.");
-      return new Local(task, this);
+      return Local;
     }
 
     switch (task.policy.type) {
       case PolicyType.local:
-        return new Local(task, this);
+        return Local;
       case PolicyType.remote:
-        return new Remote(task, this);
+        return Remote;
       case PolicyType.onedrive:
-        return new OneDrive(task, this);
+        return OneDrive;
       case PolicyType.oss:
-        return new OSS(task, this);
+        return OSS;
       case PolicyType.qiniu:
-        return new Qiniu(task, this);
+        return Qiniu;
       case PolicyType.cos:
-        return new COS(task, this);
+        return COS;
       case PolicyType.upyun:
-        return new Upyun(task, this);
+        return Upyun;
       case PolicyType.s3:
-        return new S3(task, this);
+        return S3;
       case PolicyType.ks3:
-        return new KS3(task, this);
+        return KS3;
       case PolicyType.obs:
-        return new OBS(task, this);
+        return OBS;
       case PolicyType.load_balance:
-        return new LoadBalance(task, this);
+        return LoadBalance;
       default:
         throw new UnknownPolicyError("Unknown policy type.", task.policy);
     }

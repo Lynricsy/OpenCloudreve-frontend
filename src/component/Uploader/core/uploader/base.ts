@@ -90,6 +90,8 @@ export default abstract class Base {
   public lastTime = Date.now();
   public startTime = Date.now();
   public promiseId: string | undefined;
+  // 会话返回的实际存储策略需要其他上传器时，传输委托给该上传器（共享同一个 task）
+  private delegate?: Base;
 
   constructor(
     public task: Task,
@@ -97,6 +99,7 @@ export default abstract class Base {
   ) {
     this.logger = new Logger(this.manager.logger.level, "UPLOADER", this.id);
     this.logger.info("Initialize new uploader for task: ", task);
+    this.task.originPolicy = this.task.originPolicy ?? task.policy;
     this.subscriber = {
       /* eslint-disable @typescript-eslint/no-empty-function */
       onTransition: (_newStatus: Status) => {},
@@ -135,7 +138,9 @@ export default abstract class Base {
   public run = async () => {
     this.logger.info("Start upload task, create upload session...");
     this.transit(Status.preparing);
-    this.beforeSession();
+    // 重试时恢复为派发时的策略，由服务端重新决定实际存储策略
+    this.delegate = undefined;
+    this.task.policy = this.task.originPolicy ?? this.task.policy;
     const cachedInfo = utils.getResumeCtx(this.task, this.logger);
     if (cachedInfo == null) {
       const crUri = new CrUri(this.task.dst);
@@ -161,7 +166,12 @@ export default abstract class Base {
       this.logger.info("Resume upload from cached ctx:", cachedInfo);
     }
 
-    this.afterSession();
+    // 采用服务端在上传会话中返回的实际存储策略（目标子目录挂载的策略、负载均衡解析出的子策略等），
+    // 必须在加密与传输开始前完成；若实际策略需要不同的上传器，则委托给它执行传输。
+    if (this.task.session?.storage_policy) {
+      this.task.policy = this.task.session.storage_policy;
+    }
+    const executor = this.resolveExecutor();
 
     if (this.task.session?.encrypt_metadata && !this.task.policy?.relay) {
       // Check browser support for encryption
@@ -178,8 +188,8 @@ export default abstract class Base {
     }
 
     this.transit(Status.processing);
-    await this.upload();
-    await this.afterUpload();
+    await executor.upload();
+    await executor.afterUpload();
     utils.removeResumeCtx(this.task, this.logger);
     this.transit(Status.finished);
     this.logger.info("Upload task completed");
@@ -190,18 +200,33 @@ export default abstract class Base {
     return;
   }
 
-  // 创建（或从缓存恢复）上传会话之前调用，子类可在此重置任务状态
-  protected beforeSession(): void {
-    return;
+  private resolveExecutor(): Base {
+    const uploaderClass = this.manager.uploaderClassFor(this.task);
+    if (this.constructor === uploaderClass) {
+      return this;
+    }
+
+    this.logger.info(`Actual storage policy requires another uploader, delegate to it:`, this.task.policy);
+    const delegate = new uploaderClass(this.task, this.manager);
+    delegate.subscribe({
+      onTransition: (status) => {
+        this.status = status;
+        this.subscriber.onTransition(status);
+      },
+      onError: (err) => this.subscriber.onError(err),
+      onProgress: (data) => {
+        this.progress = data;
+        this.subscriber.onProgress(data);
+      },
+      onMsg: (msg, color) => this.subscriber.onMsg(msg, color),
+    });
+    this.delegate = delegate;
+    return delegate;
   }
 
-  // 上传会话就绪之后、开始传输之前调用，子类可据此调整任务（如解析实际存储策略）
-  protected afterSession(): void {
-    return;
-  }
-
-  // 中止当前进行中的请求，不删除上传会话也不改变状态
+  // 中止当前进行中的请求（含委托上传器），不删除上传会话也不改变状态
   public abortRequests() {
+    this.delegate?.abortRequests();
     this.cancelToken.cancel();
   }
 

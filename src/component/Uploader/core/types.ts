@@ -11,8 +11,8 @@ export interface Task {
   name: string;
   size: number;
   policy: StoragePolicy;
-  // 任务派发时的负载均衡策略；上传会话创建后 policy 会被替换为服务端解析出的子策略
-  lbPolicy?: StoragePolicy;
+  // 任务派发时的存储策略（当前目录策略）；上传会话创建后 policy 会被替换为服务端返回的实际存储策略
+  originPolicy?: StoragePolicy;
   dst: string;
   file: File;
   blob: Blob;
