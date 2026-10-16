@@ -11,7 +11,6 @@ import { DenseFilledTextField, NoWrapTypography } from "../../../Common/StyledCo
 import UserAvatar from "../../../Common/User/UserAvatar";
 import FileBadge from "../../../FileManager/FileBadge";
 import SettingForm from "../../../Pages/Setting/SettingForm";
-import SinglePolicySelectionInput from "../../Common/SinglePolicySelectionInput";
 import UserDialog from "../../User/UserDialog/UserDialog";
 import { FileDialogContext } from "./FileDialog";
 import FileDirectLinks from "./FileDirectLinks";
@@ -141,8 +140,14 @@ const FileForm = () => {
             )}
             {fileParentLoading && <Skeleton variant="text" width={100} height={40} />}
           </SettingForm>
-          <SettingForm title={t("file.primaryStoragePolicy")} noContainer lgWidth={3} pro>
-            <SinglePolicySelectionInput simplified value={values.storage_policy_files ?? 0} onChange={() => {}} />
+          <SettingForm title={t("file.primaryStoragePolicy")} noContainer lgWidth={3}>
+            <Typography variant={"body2"} color={"textSecondary"}>
+              {/* 管理端文件详情未加载 storage_policies 边，回退到同策略实体上已加载的策略名 */}
+              {values.edges?.storage_policies?.name ??
+                values.edges?.entities?.find((e) => e.storage_policy_entities === values.storage_policy_files)?.edges
+                  ?.storage_policy?.name ??
+                "-"}
+            </Typography>
           </SettingForm>
           <SettingForm title={t("file.metadata")} noContainer lgWidth={6}>
             <FileMetadata />

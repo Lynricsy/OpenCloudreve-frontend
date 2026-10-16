@@ -1,32 +1,17 @@
-import { Box, FormControl, FormControlLabel, Link, ListItemText, Stack, Switch, Typography } from "@mui/material";
-import { useContext, useMemo } from "react";
+import { Box, FormControl, FormControlLabel, Link, Stack, Switch, Typography } from "@mui/material";
+import { useContext } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Link as RouterLink } from "react-router-dom";
 import { isTrueVal } from "../../../../session/utils.ts";
 import SizeInput from "../../../Common/SizeInput.tsx";
-import { DenseFilledTextField, DenseSelect } from "../../../Common/StyledComponents.tsx";
-import { SquareMenuItem } from "../../../FileManager/ContextMenu/ContextMenu.tsx";
-import SettingForm, { ProChip } from "../../../Pages/Setting/SettingForm.tsx";
-import { Code } from "../../../Common/Code.tsx";
+import { DenseFilledTextField } from "../../../Common/StyledComponents.tsx";
+import SettingForm from "../../../Pages/Setting/SettingForm.tsx";
 import GroupSelectionInput from "../../Common/GroupSelectionInput.tsx";
-import SharesInput from "../../Common/SharesInput.tsx";
 import { NoMarginHelperText, SettingSection, SettingSectionContent } from "../Settings.tsx";
 import { SettingContext } from "../SettingWrapper.tsx";
-import SSOSettings from "./SSOSettings.tsx";
 
 const UserSession = () => {
   const { t } = useTranslation("dashboard");
   const { formRef, setSettings, values } = useContext(SettingContext);
-
-  const defaultSymbolics = useMemo(() => {
-    let result: number[] = [];
-    try {
-      result = JSON.parse(values?.default_symbolics ?? "[]");
-    } catch (e) {
-      console.error(e);
-    }
-    return result;
-  }, [values?.default_symbolics]);
 
   return (
     <Box component={"form"} ref={formRef} onSubmit={(e) => e.preventDefault()}>
@@ -126,64 +111,6 @@ const UserSession = () => {
                 />
                 <NoMarginHelperText>{t("settings.defaultGroupDes")}</NoMarginHelperText>
               </FormControl>
-            </SettingForm>
-            <SettingForm title={t("settings.defaultSymbolics")} lgWidth={5} pro>
-              <FormControl>
-                <SharesInput />
-                <NoMarginHelperText>
-                  <Trans
-                    i18nKey="settings.defaultSymbolicsDes"
-                    ns={"dashboard"}
-                    components={[<Link component={RouterLink} to={"/admin/share"} />]}
-                  />
-                </NoMarginHelperText>
-              </FormControl>
-            </SettingForm>
-            <SettingForm title={t("vas.filterEmailProvider")} lgWidth={5} pro>
-              <FormControl>
-                <DenseSelect value={0}>
-                  {["filterEmailProviderDisabled", "filterEmailProviderWhitelist", "filterEmailProviderBlacklist"].map(
-                    (v, i) => (
-                      <SquareMenuItem value={i.toString()}>
-                        <ListItemText
-                          slotProps={{
-                            primary: { variant: "body2" },
-                          }}
-                        >
-                          {t(`vas.${v}`)}
-                        </ListItemText>
-                      </SquareMenuItem>
-                    ),
-                  )}
-                </DenseSelect>
-                <NoMarginHelperText>{t("vas.filterEmailProviderDes")}</NoMarginHelperText>
-              </FormControl>
-            </SettingForm>
-            <SettingForm lgWidth={5} pro>
-              <FormControl fullWidth>
-                <FormControlLabel
-                  control={<Switch checked={false} />}
-                  label={
-                    <>
-                      {t("vas.disableSubAddressEmail")}
-                      <ProChip label="Pro" color="primary" size="small" />
-                    </>
-                  }
-                />
-                <NoMarginHelperText>
-                  <Trans i18nKey="vas.disableSubAddressEmailDes" ns={"dashboard"} components={[<Code />]} />
-                </NoMarginHelperText>
-              </FormControl>
-            </SettingForm>
-          </SettingSectionContent>
-        </SettingSection>
-        <SettingSection>
-          <Typography variant="h6" gutterBottom sx={{ display: "flex", alignItems: "center" }}>
-            {t("settings.thirdPartySignIn")} <ProChip label="Pro" color="primary" size="small" />
-          </Typography>
-          <SettingSectionContent>
-            <SettingForm lgWidth={5}>
-              <SSOSettings />
             </SettingForm>
           </SettingSectionContent>
         </SettingSection>

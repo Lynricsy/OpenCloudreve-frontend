@@ -64,12 +64,6 @@ const SiteInformation = () => {
                 <NoMarginHelperText>{t("settings.customFooterHTMLDes")}</NoMarginHelperText>
               </FormControl>
             </SettingForm>
-            <SettingForm title={t("settings.announcement")} lgWidth={5} pro>
-              <FormControl fullWidth>
-                <DenseFilledTextField inputProps={{ readOnly: true }} fullWidth multiline rows={4} />
-                <NoMarginHelperText>{t("settings.announcementDes")}</NoMarginHelperText>
-              </FormControl>
-            </SettingForm>
             <SettingForm title={t("settings.tosUrl")} lgWidth={5}>
               <FormControl fullWidth>
                 <DenseFilledTextField
@@ -227,25 +221,6 @@ const SiteInformation = () => {
                   label={t("vas.showAppPromotion")}
                 />
                 <NoMarginHelperText>{t("vas.showAppPromotionDes")}</NoMarginHelperText>
-              </FormControl>
-            </SettingForm>
-            <SettingForm title={t("vas.appFeedback")} lgWidth={5} pro>
-              <FormControl fullWidth>
-                <DenseFilledTextField
-                  fullWidth
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                />
-                <NoMarginHelperText>{t("vas.appLinkDes")}</NoMarginHelperText>
-              </FormControl>
-            </SettingForm>
-            <SettingForm title={t("vas.appForum")} lgWidth={5} pro>
-              <FormControl fullWidth>
-                <DenseFilledTextField fullWidth slotProps={{ input: { readOnly: true } }} />
-                <NoMarginHelperText>{t("vas.appLinkDes")}</NoMarginHelperText>
               </FormControl>
             </SettingForm>
           </SettingSectionContent>

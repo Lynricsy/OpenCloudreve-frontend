@@ -13,7 +13,7 @@ import { DefaultCloseAction } from "../../../Common/Snackbar/snackbar.tsx";
 import { DenseFilledTextField, StyledCheckbox } from "../../../Common/StyledComponents.tsx";
 import SettingForm from "../../../Pages/Setting/SettingForm.tsx";
 import { NoMarginHelperText, SettingSectionContent } from "../Settings.tsx";
-import { AccordionSummary, StyledAccordion } from "../UserSession/SSOSettings.tsx";
+import { AccordionSummary, StyledAccordion } from "../../Common/StyledAccordion.tsx";
 
 export interface GeneratorsProps {
   values: {

@@ -25,7 +25,7 @@ import { SquareMenuItem } from "../../../FileManager/ContextMenu/ContextMenu.tsx
 import Add from "../../../Icons/Add.tsx";
 import DesktopFlow from "../../../Icons/DesktopFlow.tsx";
 import DocumentDataLink from "../../../Icons/DocumentDataLink.tsx";
-import { AccordionSummary, StyledAccordion } from "../../Settings/UserSession/SSOSettings.tsx";
+import { AccordionSummary, StyledAccordion } from "../../Common/StyledAccordion.tsx";
 import FileViewerEditDialog from "./FileViewerEditDialog.tsx";
 import FileViewerRow from "./FileViewerRow.tsx";
 import ImportWopiDialog from "./ImportWopiDialog.tsx";

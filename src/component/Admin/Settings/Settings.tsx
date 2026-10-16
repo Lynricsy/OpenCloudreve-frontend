@@ -8,26 +8,22 @@ import ResponsiveTabs, { Tab } from "../../Common/ResponsiveTabs.tsx";
 import Bot from "../../Icons/Bot.tsx";
 import Color from "../../Icons/Color.tsx";
 import CubeSync from "../../Icons/CubeSync.tsx";
-import Currency from "../../Icons/Currency.tsx";
 import FilmstripImage from "../../Icons/FilmstripImage.tsx";
 import Globe from "../../Icons/Globe.tsx";
 import MailOutlined from "../../Icons/MailOutlined.tsx";
 import PersonPasskey from "../../Icons/PersonPasskey.tsx";
-import SendLogging from "../../Icons/SendLogging.tsx";
 import Server from "../../Icons/Server.tsx";
 import PageContainer from "../../Pages/PageContainer.tsx";
 import PageHeader, { PageTabQuery } from "../../Pages/PageHeader.tsx";
 import Appearance from "./Appearance/Appearance.tsx";
 import Captcha from "./Captcha/Captcha.tsx";
 import Email from "./Email/Email.tsx";
-import Events from "./Event/Events.tsx";
 import Media from "./Media/Media.tsx";
 import Queue from "./Queue/Queue.tsx";
 import ServerSetting from "./Server/ServerSetting.tsx";
 import SettingsWrapper from "./SettingWrapper.tsx";
 import SiteInformation from "./SiteInformation/SiteInformation.tsx";
 import UserSession from "./UserSession/UserSession.tsx";
-import VAS from "./VAS/VAS.tsx";
 
 export const StyledInputAdornment = styled(InputAdornment)(({ theme }) => ({
   fontSize: theme.typography.body2.fontSize,
@@ -71,11 +67,9 @@ export enum SettingsPageTab {
   Captcha = "captcha",
   FileSystem = "fileSystem",
   MediaProcessing = "mediaProcessing",
-  VAS = "vas",
   Email = "email",
   Queue = "queue",
   Appearance = "appearance",
-  Events = "events",
   Server = "server",
 }
 
@@ -108,11 +102,6 @@ const Settings = () => {
           icon: <FilmstripImage />,
         },
         {
-          label: t("vas.vas"),
-          value: SettingsPageTab.VAS,
-          icon: <Currency />,
-        },
-        {
           label: t("nav.email"),
           value: SettingsPageTab.Email,
           icon: <MailOutlined />,
@@ -126,11 +115,6 @@ const Settings = () => {
           label: t("nav.appearance"),
           value: SettingsPageTab.Appearance,
           icon: <Color />,
-        },
-        {
-          label: t("nav.events"),
-          value: SettingsPageTab.Events,
-          icon: <SendLogging />,
         },
         {
           label: t("nav.server"),
@@ -275,11 +259,6 @@ const Settings = () => {
                   <Media />
                 </SettingsWrapper>
               )}
-              {tab === SettingsPageTab.VAS && (
-                <SettingsWrapper settings={[]}>
-                  <VAS />
-                </SettingsWrapper>
-              )}
               {tab === SettingsPageTab.Email && (
                 <SettingsWrapper
                   settings={[
@@ -316,11 +295,6 @@ const Settings = () => {
                   ]}
                 >
                   <Appearance />
-                </SettingsWrapper>
-              )}
-              {tab === SettingsPageTab.Events && (
-                <SettingsWrapper settings={[]}>
-                  <Events />
                 </SettingsWrapper>
               )}
               {tab === SettingsPageTab.Server && (

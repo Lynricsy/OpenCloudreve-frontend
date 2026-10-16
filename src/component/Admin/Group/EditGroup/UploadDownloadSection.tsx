@@ -1,4 +1,4 @@
-import { Box, Collapse, FormControl, FormControlLabel, Stack, Switch, Typography } from "@mui/material";
+import { Collapse, FormControl, FormControlLabel, Stack, Switch, Typography } from "@mui/material";
 import { useCallback, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { GroupEnt } from "../../../../api/dashboard";
@@ -6,7 +6,7 @@ import { GroupPermission } from "../../../../api/user";
 import Boolset from "../../../../util/boolset";
 import SizeInput from "../../../Common/SizeInput";
 import { DenseFilledTextField } from "../../../Common/StyledComponents";
-import SettingForm, { ProChip } from "../../../Pages/Setting/SettingForm";
+import SettingForm from "../../../Pages/Setting/SettingForm";
 import { NoMarginHelperText, SettingSection, SettingSectionContent } from "../../Settings/Settings";
 import { AnonymousGroupID } from "../GroupRow";
 import { GroupSettingContext } from "./GroupSettingWrapper";
@@ -160,17 +160,9 @@ const UploadDownloadSection = () => {
                       <NoMarginHelperText>{t("group.reuseDirectLinkDes")}</NoMarginHelperText>
                     </FormControl>
                   </SettingForm>
-                  <SettingForm lgWidth={5} pro>
+                  <SettingForm lgWidth={5}>
                     <FormControl fullWidth>
-                      <FormControlLabel
-                        control={<Switch checked={false} />}
-                        label={
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            {t("group.folderDirectLink")}
-                            <ProChip size="small" label="Pro" />
-                          </Box>
-                        }
-                      />
+                      <FormControlLabel control={<Switch checked={false} />} label={t("group.folderDirectLink")} />
                       <NoMarginHelperText>{t("group.folderDirectLinkDes")}</NoMarginHelperText>
                     </FormControl>
                   </SettingForm>

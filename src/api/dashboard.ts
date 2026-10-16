@@ -16,7 +16,6 @@ export interface MetricsSummary {
 
 export interface Version {
   version: string;
-  pro: boolean;
   commit: string;
 }
 
