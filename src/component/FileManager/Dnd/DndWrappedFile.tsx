@@ -13,6 +13,7 @@ import CrUri, { Filesystem } from "../../../util/uri.ts";
 import { FileBlockProps } from "../Explorer/Explorer.tsx";
 import { FileManagerIndex } from "../FileManager.tsx";
 import { FmIndexContext } from "../FmIndexContext.tsx";
+import { canManageFile } from "../ContextMenu/useActionDisplayOpt.ts";
 
 export interface DragItem {
   target: FileResponse;
@@ -66,7 +67,7 @@ export const useFileDrag = ({ file, includeSelected, dropUri }: UseFileDragProps
       }
 
       const crUri = new CrUri(file.path);
-      return file.owned && crUri.fs() != Filesystem.share;
+      return canManageFile(file) && crUri.fs() != Filesystem.share;
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),

@@ -33,6 +33,7 @@ import UserBadge from "../../Common/User/UserBadge.tsx";
 import DraggableDialog from "../../Dialogs/DraggableDialog.tsx";
 import MoreVertical from "../../Icons/MoreVertical.tsx";
 import { SquareMenuItem } from "../ContextMenu/ContextMenu.tsx";
+import { canManageFile } from "../ContextMenu/useActionDisplayOpt.ts";
 import { FileManagerIndex } from "../FileManager.tsx";
 import { EncryptionStatusText } from "../Sidebar/BasicInfo.tsx";
 
@@ -181,12 +182,12 @@ const VersionControl = () => {
         <SquareMenuItem onClick={downloadEntity} dense>
           <ListItemText>{t("application:fileManager.download")}</ListItemText>
         </SquareMenuItem>
-        {target?.owned && actionTarget?.id !== fileExtended?.primary_entity && (
+        {canManageFile(target) && actionTarget?.id !== fileExtended?.primary_entity && (
           <SquareMenuItem onClick={setAsCurrent} dense>
             <ListItemText>{t("application:fileManager.setAsCurrent")}</ListItemText>
           </SquareMenuItem>
         )}
-        {target?.owned && actionTarget?.id !== fileExtended?.primary_entity && (
+        {canManageFile(target) && actionTarget?.id !== fileExtended?.primary_entity && (
           <SquareMenuItem onClick={deleteTargetVersion} dense>
             <ListItemText>{t("application:fileManager.delete")}</ListItemText>
           </SquareMenuItem>

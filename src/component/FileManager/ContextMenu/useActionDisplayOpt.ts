@@ -25,6 +25,24 @@ export const canShowInfo = (cap: Boolset) => {
   return cap.enabled(NavigatorCapability.info);
 };
 
+// canManageFile 判断当前用户能否以所有者身份管理该文件：本人文件，或管理员在“我的文件”
+// 文件系统中（含通过后台进入的 `cloudreve://<uid>@my/`）访问他人文件。分享、回收站、
+// 他人分享给我等场景仍只按 owned 判定。
+export const canManageFile = (file?: FileResponse): boolean => {
+  if (!file) {
+    return false;
+  }
+
+  if (file.owned) {
+    return true;
+  }
+
+  return (
+    SessionManager.currentUserGroupPermission().enabled(GroupPermission.is_admin) &&
+    new CrUri(file.path).fs() == Filesystem.my
+  );
+};
+
 export const canUpdate = (opt: DisplayOption) => {
   return !!(
     opt.allUpdatable &&
@@ -119,7 +137,7 @@ export const getActionOpt = (
     }
 
     const parentCap = new Boolset(parent.capability);
-    display.showCreateFolder = parentCap.enabled(NavigatorCapability.create_file) && parent.owned;
+    display.showCreateFolder = parentCap.enabled(NavigatorCapability.create_file) && canManageFile(parent);
     display.showCreateFile = display.showCreateFolder && fmIndex == FileManagerIndex.main;
     display.showUpload = display.showCreateFile;
     if (display.showCreateFile) {
@@ -142,7 +160,8 @@ export const getActionOpt = (
   const parentUrl = new CrUri(targets?.[0]?.path ?? defaultPath);
   targets.forEach((target) => {
     let readable = true;
-    let updatable = target.owned && parentUrl.fs() != Filesystem.share;
+    const manageable = canManageFile(target);
+    let updatable = manageable && parentUrl.fs() != Filesystem.share;
 
     if (display.allReadable && !readable) {
       display.allReadable = false;
@@ -175,7 +194,7 @@ export const getActionOpt = (
       display.hasFolder = true;
     }
 
-    if (target.owned) {
+    if (manageable) {
       display.hasOwned = true;
     }
 
@@ -312,7 +331,7 @@ export const getActionOpt = (
   display.showMountPolicy =
     targets.length == 1 &&
     display.hasFolder &&
-    targets[0].owned &&
+    canManageFile(targets[0]) &&
     !display.hasTrashFile &&
     !!currentUser &&
     parentUrl.fs() == Filesystem.my &&
