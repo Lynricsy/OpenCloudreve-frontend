@@ -6,6 +6,7 @@ import {
   setCreateArchiveDialog,
   setDirectLinkManagementDialog,
   setManageShareDialog,
+  setMountPolicyDialog,
   setVersionControlDialog,
 } from "../../../redux/globalStateSlice.ts";
 import { useAppDispatch } from "../../../redux/hooks.ts";
@@ -15,6 +16,7 @@ import BranchForkLink from "../../Icons/BranchForkLink.tsx";
 import HistoryOutlined from "../../Icons/HistoryOutlined.tsx";
 import ImageArrowCounterclockwise from "../../Icons/ImageAarowCounterclockwise.tsx";
 import LinkSetting from "../../Icons/LinkSetting.tsx";
+import StorageOutlined from "../../Icons/StorageOutlined.tsx";
 import { CascadingContext, CascadingMenuItem } from "./CascadingMenu.tsx";
 import { SubMenuItemsProps } from "./OrganizeMenuItems.tsx";
 
@@ -113,6 +115,23 @@ const MoreMenuItems = ({ displayOpt, targets }: SubMenuItemsProps) => {
             <ImageArrowCounterclockwise fontSize="small" />
           </ListItemIcon>
           <ListItemText>{t("application:fileManager.resetThumbnail")}</ListItemText>
+        </CascadingMenuItem>
+      )}
+      {displayOpt.showMountPolicy && (
+        <CascadingMenuItem
+          onClick={onClick(() =>
+            dispatch(
+              setMountPolicyDialog({
+                open: true,
+                file: targets[0],
+              }),
+            ),
+          )}
+        >
+          <ListItemIcon>
+            <StorageOutlined fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>{t("application:fileManager.mountPolicy")}</ListItemText>
         </CascadingMenuItem>
       )}
     </>

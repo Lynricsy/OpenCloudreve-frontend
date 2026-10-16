@@ -11,6 +11,7 @@ import SettingForm from "../../../Pages/Setting/SettingForm";
 import { NoMarginHelperText, SettingSection, SettingSectionContent } from "../../Settings/Settings";
 import { AnonymousGroupID } from "../GroupRow";
 import { GroupSettingContext } from "./GroupSettingWrapper";
+import MultiplePolicySelectionInput from "./MultiplePolicySelectionInput";
 import PolicySelectionInput from "./PolicySelectionInput";
 const BasicInfoSection = () => {
   const { t } = useTranslation("dashboard");
@@ -32,6 +33,16 @@ const BasicInfoSection = () => {
       setGroup((p: GroupEnt) => ({
         ...p,
         edges: { ...p.edges, storage_policies: { id: value } as StoragePolicy },
+      }));
+    },
+    [setGroup],
+  );
+
+  const onAvailablePoliciesChange = useCallback(
+    (value: number[]) => {
+      setGroup((p: GroupEnt) => ({
+        ...p,
+        settings: { ...p.settings, available_policies: value },
       }));
     },
     [setGroup],
@@ -78,8 +89,16 @@ const BasicInfoSection = () => {
         </SettingForm>
         {values?.id != AnonymousGroupID && (
           <>
-            <SettingForm title={t("group.availablePolicies")} lgWidth={5}>
+            <SettingForm title={t("group.defaultPolicy")} lgWidth={5}>
               <PolicySelectionInput value={values.edges.storage_policies?.id ?? 0} onChange={onPolicyChange} />
+              <NoMarginHelperText>{t("group.defaultPolicyDes")}</NoMarginHelperText>
+            </SettingForm>
+            <SettingForm title={t("group.availablePolicies")} lgWidth={5}>
+              <MultiplePolicySelectionInput
+                value={values.settings?.available_policies ?? []}
+                exclude={values.edges.storage_policies?.id ?? 0}
+                onChange={onAvailablePoliciesChange}
+              />
               <NoMarginHelperText>{t("group.availablePoliciesDes")}</NoMarginHelperText>
             </SettingForm>
             <SettingForm title={t("group.initialStorageQuota")} lgWidth={5}>

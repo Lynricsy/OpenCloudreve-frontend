@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks.ts";
 import Nothing from "../../Common/Nothing.tsx";
 import TaskCard from "./TaskCard.tsx";
 import PageContainer from "../PageContainer.tsx";
+import { loadPolicyOptions } from "../../../redux/thunks/file.ts";
 
 const defaultPageSize = 25;
 const autoRefreshInterval = 20 * 1000;
@@ -35,6 +36,8 @@ const TaskList = () => {
   }, [autoRefresh]);
 
   useEffect(() => {
+    // 预加载存储策略列表，供任务摘要显示目标策略名称
+    dispatch(loadPolicyOptions()).catch(() => {});
     return () => {
       clearInterval(interval.current);
       interval.current = undefined;

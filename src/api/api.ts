@@ -60,6 +60,7 @@ import {
   ListFileService,
   ListResponse,
   MoveFileService,
+  MountPolicyService,
   MultipleUriService,
   PatchMetadataService,
   PatchViewSyncService,
@@ -67,6 +68,7 @@ import {
   RenameFileService,
   Share,
   ShareCreateService,
+  StoragePolicy,
   UnlockFileService,
   UploadCredential,
   UploadSessionRequest,
@@ -1100,6 +1102,22 @@ export function getUserSettings(): ThunkResponse<UserSettings> {
   };
 }
 
+export function getUserStoragePolicies(): ThunkResponse<StoragePolicy[]> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        `/user/setting/policies`,
+        {
+          method: "GET",
+        },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
 export function sendUploadAvatar(avatar?: Blob, contentType?: string): ThunkResponse {
   return async (dispatch, _getState) => {
     return await dispatch(
@@ -2033,6 +2051,20 @@ export function sendPatchViewSync(args: PatchViewSyncService): ThunkResponse<voi
     return await dispatch(
       send(
         `/file/view`,
+        { method: "PATCH", data: args },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
+export function sendMountPolicy(args: MountPolicyService): ThunkResponse<StoragePolicy> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        `/file/policy`,
         { method: "PATCH", data: args },
         {
           ...defaultOpts,

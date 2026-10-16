@@ -14,6 +14,7 @@ import {
   sendRenameFile,
   sendRestoreFile,
   sendUnlockFiles,
+  getUserStoragePolicies,
   setCurrentVersion,
 } from "../../api/api.ts";
 import {
@@ -25,6 +26,7 @@ import {
   Metadata,
   MetadataPatch,
   NewFileTemplate,
+  StoragePolicy,
   Viewer,
 } from "../../api/explorer.ts";
 import { AppError, Response } from "../../api/request.ts";
@@ -68,6 +70,7 @@ import {
   CreateNewDialogType,
   setDirectLinkDialog,
   setExtractArchiveDialog,
+  setPolicyOptionCache,
   setRemoteDownloadDialog,
   setShareLinkDialog,
   setSidebar,
@@ -1366,5 +1369,19 @@ function startBatchGetDirectLinks(files: FileResponse[]): AppThunk<Promise<Direc
         uris: allFiles.map((f) => getFileLinkedUri(f)),
       }),
     );
+  };
+}
+
+// 加载当前用户可用的存储策略到 policyOptionCache；已缓存且非强制刷新时直接返回缓存。
+export function loadPolicyOptions(force = false): AppThunk<Promise<StoragePolicy[]>> {
+  return async (dispatch, getState): Promise<StoragePolicy[]> => {
+    const cached = getState().globalState.policyOptionCache;
+    if (cached && !force) {
+      return cached;
+    }
+
+    const policies = await dispatch(getUserStoragePolicies());
+    dispatch(setPolicyOptionCache(policies));
+    return policies;
   };
 }

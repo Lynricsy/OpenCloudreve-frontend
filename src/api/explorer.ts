@@ -490,6 +490,12 @@ export interface PatchViewSyncService {
   view?: ExplorerView;
 }
 
+export interface MountPolicyService {
+  uri: string;
+  // 存储策略 hashid，空字符串表示恢复继承
+  policy_id: string;
+}
+
 export interface CustomProps {
   id: string;
   name: string;

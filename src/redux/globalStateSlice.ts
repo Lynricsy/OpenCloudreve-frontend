@@ -221,6 +221,10 @@ export interface GlobalStateSlice {
   desktopMountSetupDialogOpen?: boolean;
   desktopMountSetupState?: DesktopCallbackState;
 
+  // Folder storage policy mount dialog
+  mountPolicyDialogOpen?: boolean;
+  mountPolicyDialogFile?: FileResponse;
+
   // DnD
   dndState: DndState;
 
@@ -312,6 +316,13 @@ export const globalStateSlice = createSlice({
     closeDesktopMountSetupDialog: (state) => {
       state.desktopMountSetupDialogOpen = false;
       state.desktopMountSetupState = undefined;
+    },
+    setMountPolicyDialog: (state, action: PayloadAction<{ open: boolean; file?: FileResponse }>) => {
+      state.mountPolicyDialogOpen = action.payload.open;
+      state.mountPolicyDialogFile = action.payload.file;
+    },
+    closeMountPolicyDialog: (state) => {
+      state.mountPolicyDialogOpen = false;
     },
     setUploadRawFiles: (
       state,
@@ -947,4 +958,6 @@ export const {
   clearOAuthApp,
   setDesktopMountSetupDialog,
   closeDesktopMountSetupDialog,
+  setMountPolicyDialog,
+  closeMountPolicyDialog,
 } = globalStateSlice.actions;

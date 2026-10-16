@@ -33,6 +33,7 @@ import React from "react";
 import ColumnSetting from "../Explorer/ListView/ColumnSetting.tsx";
 import DirectLinks from "./DirectLinks/DirectLinks.tsx";
 import DirectLinksControl from "./DirectLinksControl.tsx";
+import MountPolicy from "./MountPolicy.tsx";
 
 const Dialogs = () => {
   const showCreateArchive = useAppSelector((state) => state.globalState.createArchiveDialogOpen);
@@ -45,6 +46,7 @@ const Dialogs = () => {
   const directLinkManagement = useAppSelector((state) => state.globalState.directLinkManagementDialogOpen);
   const archivePreview = useAppSelector((state) => state.globalState.archiveViewer);
   const desktopMountSetup = useAppSelector((state) => state.globalState.desktopMountSetupDialogOpen);
+  const mountPolicy = useAppSelector((state) => state.globalState.mountPolicyDialogOpen);
 
   return (
     <>
@@ -81,6 +83,7 @@ const Dialogs = () => {
       {directLinkManagement != undefined && <DirectLinksControl />}
       {archivePreview != undefined && <ArchivePreview />}
       {desktopMountSetup != undefined && <DesktopMountSetup />}
+      {mountPolicy != undefined && <MountPolicy />}
     </>
   );
 };

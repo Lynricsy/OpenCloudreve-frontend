@@ -79,6 +79,7 @@ export interface DisplayOption {
   showManageShares?: boolean;
   showCreateArchive?: boolean;
   showResetThumb?: boolean;
+  showMountPolicy?: boolean;
 
   andCapability?: Boolset;
   orCapability?: Boolset;
@@ -304,13 +305,22 @@ export const getActionOpt = (
     display.allUpdatable &&
     display.orCapability &&
     display.orCapability.enabled(NavigatorCapability.update_metadata);
+  display.showMountPolicy =
+    targets.length == 1 &&
+    display.hasFolder &&
+    targets[0].owned &&
+    !display.hasTrashFile &&
+    !!currentUser &&
+    parentUrl.fs() == Filesystem.my &&
+    (!targets[0].metadata || !targets[0].metadata[Metadata.share_redirect]);
 
   display.showMore =
     display.showVersionControl ||
     display.showManageShares ||
     display.showCreateArchive ||
     display.showDirectLinkManagement ||
-    display.showResetThumb;
+    display.showResetThumb ||
+    display.showMountPolicy;
   return display;
 };
 
