@@ -128,6 +128,11 @@ const buildSpans = (marks: PhaseMark[], terminal?: GDriveTaskEvent): PhaseSpan[]
 
 const findEvent = (log: GDriveTaskEventLog, code: string) => log.events?.find((e) => e.c === code);
 
+// 终止事件：全部文件失败时 finish() 先写 finished/restore_finished，随后 OnError 再追加 task_failed，
+// 因此 task_failed 优先，否则任务会被误显示为成功完成。
+const findTerminal = (log: GDriveTaskEventLog, finishedCode: string) =>
+  findEvent(log, "task_failed") ?? findEvent(log, finishedCode);
+
 // 根据事件推算备份任务的阶段时间线：
 // started → 扫描；scan_done → 从机（本次有从机实体时）；manifest_started → 生成清单；
 // snapshot_uploaded → 清理；finished / task_failed 为结束。
@@ -137,7 +142,7 @@ export const getBackupPhaseSpans = (state: GDriveBackupTaskState): PhaseSpan[] =
   const scanDone = findEvent(state, "scan_done");
   const manifestStarted = findEvent(state, "manifest_started");
   const uploaded = findEvent(state, "snapshot_uploaded");
-  const terminal = events.find((e) => e.c === "finished" || e.c === "task_failed");
+  const terminal = findTerminal(state, "finished");
 
   const marks: PhaseMark[] = [];
   if (started) {
@@ -165,7 +170,7 @@ export const getBackupPhaseSpans = (state: GDriveBackupTaskState): PhaseSpan[] =
 export const getRestorePhaseSpans = (state: GDriveRestoreTaskState): PhaseSpan[] => {
   const started = findEvent(state, "restore_started");
   const planned = findEvent(state, "restore_planned");
-  const terminal = state.events?.find((e) => e.c === "restore_finished" || e.c === "task_failed");
+  const terminal = findTerminal(state, "restore_finished");
 
   const marks: PhaseMark[] = [];
   if (started) {
