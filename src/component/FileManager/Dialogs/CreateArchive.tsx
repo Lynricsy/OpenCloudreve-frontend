@@ -3,11 +3,13 @@ import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { sendCreateArchive } from "../../../api/api.ts";
+import { NodeCapability } from "../../../api/workflow.ts";
 import { closeCreateArchiveDialog } from "../../../redux/globalStateSlice.ts";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks.ts";
 import { getFileLinkedUri } from "../../../util";
 import CrUri from "../../../util/uri.ts";
 import { OutlineIconTextField } from "../../Common/Form/OutlineIconTextField.tsx";
+import NodeSelector from "../../Common/Form/NodeSelector.tsx";
 import { PathSelectorForm } from "../../Common/Form/PathSelectorForm.tsx";
 import { ViewTaskAction } from "../../Common/Snackbar/snackbar.tsx";
 import DraggableDialog from "../../Dialogs/DraggableDialog.tsx";
@@ -24,6 +26,7 @@ const CreateArchive = () => {
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState("archive.zip");
   const [path, setPath] = useState("");
+  const [nodeId, setNodeId] = useState("");
 
   const open = useAppSelector((state) => state.globalState.createArchiveDialogOpen);
   const targets = useAppSelector((state) => state.globalState.createArchiveDialogFiles);
@@ -50,6 +53,7 @@ const CreateArchive = () => {
       sendCreateArchive({
         src: targets?.map((t) => getFileLinkedUri(t)),
         dst: dst.join(fileName).toString(),
+        node_id: nodeId || undefined,
       }),
     )
       .then(() => {
@@ -63,7 +67,7 @@ const CreateArchive = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [targets, fileName, path]);
+  }, [targets, fileName, path, nodeId]);
 
   return (
     <DraggableDialog
@@ -94,6 +98,7 @@ const CreateArchive = () => {
           <Stack spacing={3} direction={isMobile ? "column" : "row"}>
             <PathSelectorForm onChange={setPath} path={path} label={t("modals.saveToTitle")} />
           </Stack>
+          <NodeSelector capability={NodeCapability.create_archive} value={nodeId} onChange={setNodeId} open={open} />
         </Stack>
       </DialogContent>
     </DraggableDialog>

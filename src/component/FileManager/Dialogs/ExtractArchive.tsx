@@ -3,11 +3,15 @@ import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { sendExtractArchive } from "../../../api/api.ts";
+import { GroupPermission } from "../../../api/user.ts";
+import { NodeCapability } from "../../../api/workflow.ts";
 import { closeExtractArchiveDialog } from "../../../redux/globalStateSlice.ts";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks.ts";
+import SessionManager from "../../../session";
 import { fileExtension, getFileLinkedUri } from "../../../util";
 import EncodingSelector, { defaultEncodingValue } from "../../Common/Form/EncodingSelector.tsx";
 import { FileDisplayForm } from "../../Common/Form/FileDisplayForm.tsx";
+import NodeSelector from "../../Common/Form/NodeSelector.tsx";
 import { PathSelectorForm } from "../../Common/Form/PathSelectorForm.tsx";
 import { ViewTaskAction } from "../../Common/Snackbar/snackbar.tsx";
 import DraggableDialog from "../../Dialogs/DraggableDialog.tsx";
@@ -26,6 +30,7 @@ const ExtractArchive = () => {
   const [encoding, setEncoding] = useState(defaultEncodingValue);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [nodeId, setNodeId] = useState("");
 
   const open = useAppSelector((state) => state.globalState.extractArchiveDialogOpen);
   const target = useAppSelector((state) => state.globalState.extractArchiveDialogFile);
@@ -70,6 +75,7 @@ const ExtractArchive = () => {
         encoding: showEncodingOption && encoding != defaultEncodingValue ? encoding : undefined,
         password: showPasswordOption && password ? password : undefined,
         file_mask: mask ?? undefined,
+        node_id: nodeId || undefined,
       }),
     )
       .then(() => {
@@ -83,7 +89,7 @@ const ExtractArchive = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [target, encoding, path, showPasswordOption, showEncodingOption, password, mask]);
+  }, [target, encoding, path, showPasswordOption, showEncodingOption, password, mask, nodeId]);
 
   return (
     <DraggableDialog
@@ -156,6 +162,20 @@ const ExtractArchive = () => {
                 label={t("modals.password")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </Grid2>
+          )}
+          {SessionManager.currentUserGroupPermission().enabled(GroupPermission.select_node) && (
+            <Grid2
+              size={{
+                xs: 12,
+              }}
+            >
+              <NodeSelector
+                capability={NodeCapability.extract_archive}
+                value={nodeId}
+                onChange={setNodeId}
+                open={open}
               />
             </Grid2>
           )}

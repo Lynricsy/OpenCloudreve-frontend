@@ -151,6 +151,26 @@ const FileManagementSection = () => {
     [setGroup],
   );
 
+  const onAllowedNodesChange = useCallback(
+    (nodes: number[]) => {
+      setGroup((p: GroupEnt) => ({
+        ...p,
+        settings: { ...p.settings, allowed_nodes: nodes.length > 0 ? nodes : undefined },
+      }));
+    },
+    [setGroup],
+  );
+
+  const onAllowSelectNodeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setGroup((p: GroupEnt) => ({
+        ...p,
+        permissions: new Boolset(p.permissions).set(GroupPermission.select_node, e.target.checked).toString(),
+      }));
+    },
+    [setGroup],
+  );
+
   return (
     <SettingSection>
       <Typography variant="h6" gutterBottom>
@@ -308,13 +328,24 @@ const FileManagementSection = () => {
             </SettingForm>
             <SettingForm title={t("group.allowedNodes")} lgWidth={5}>
               <FormControl fullWidth>
-                <MultipleNodeSelectionInput />
+                <MultipleNodeSelectionInput
+                  value={values.settings?.allowed_nodes ?? []}
+                  onChange={onAllowedNodesChange}
+                />
                 <NoMarginHelperText>{t("group.allowedNodesDes")}</NoMarginHelperText>
               </FormControl>
             </SettingForm>
             <SettingForm lgWidth={5}>
               <FormControl fullWidth>
-                <FormControlLabel control={<Switch checked={false} />} label={t("group.allowSelectNode")} />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={permission.enabled(GroupPermission.select_node)}
+                      onChange={onAllowSelectNodeChange}
+                    />
+                  }
+                  label={t("group.allowSelectNode")}
+                />
                 <NoMarginHelperText>{t("group.allowSelectNodeDes")}</NoMarginHelperText>
               </FormControl>
             </SettingForm>

@@ -147,6 +147,8 @@
     "dashboard": "管理面板"
   },
   "fileManager": {
+    "processingNode": "处理节点",
+    "autoAssignNode": "自动分配",
     "continueInDesktop": "授权成功，请在桌面客户端中继续操作。",
     "desktopMountSetup": "挂载到桌面客户端",
     "desktopMountSetupDescription": "选择要挂载到桌面客户端的目录。",

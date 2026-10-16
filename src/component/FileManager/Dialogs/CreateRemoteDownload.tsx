@@ -3,12 +3,14 @@ import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { sendCreateRemoteDownload } from "../../../api/api.ts";
+import { NodeCapability } from "../../../api/workflow.ts";
 import { defaultPath } from "../../../hooks/useNavigation.tsx";
 import { closeRemoteDownloadDialog } from "../../../redux/globalStateSlice.ts";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks.ts";
 import { getFileLinkedUri } from "../../../util";
 import CrUri, { Filesystem } from "../../../util/uri.ts";
 import { FileDisplayForm } from "../../Common/Form/FileDisplayForm.tsx";
+import NodeSelector from "../../Common/Form/NodeSelector.tsx";
 import { OutlineIconTextField } from "../../Common/Form/OutlineIconTextField.tsx";
 import { PathSelectorForm } from "../../Common/Form/PathSelectorForm.tsx";
 import { ViewTaskAction } from "../../Common/Snackbar/snackbar.tsx";
@@ -26,6 +28,7 @@ const CreateRemoteDownload = () => {
   const [loading, setLoading] = useState(false);
   const [path, setPath] = useState("");
   const [url, setUrl] = useState("");
+  const [nodeId, setNodeId] = useState("");
 
   const open = useAppSelector((state) => state.globalState.remoteDownloadDialogOpen);
   const target = useAppSelector((state) => state.globalState.remoteDownloadDialogFile);
@@ -55,6 +58,7 @@ const CreateRemoteDownload = () => {
         src_file: target ? getFileLinkedUri(target) : undefined,
         dst: path,
         src: url ? url.split("\n") : undefined,
+        node_id: nodeId || undefined,
       }),
     )
       .then(() => {
@@ -68,7 +72,7 @@ const CreateRemoteDownload = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [target, url, path]);
+  }, [target, url, path, nodeId]);
 
   return (
     <DraggableDialog
@@ -111,6 +115,7 @@ const CreateRemoteDownload = () => {
               label={t("modals.remoteDownloadDst")}
             />
           </Stack>
+          <NodeSelector capability={NodeCapability.remote_download} value={nodeId} onChange={setNodeId} open={open} />
         </Stack>
       </DialogContent>
     </DraggableDialog>

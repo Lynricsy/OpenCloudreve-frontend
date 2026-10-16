@@ -147,6 +147,8 @@
     "dashboard": "Dashboard"
   },
   "fileManager": {
+    "processingNode": "Processing node",
+    "autoAssignNode": "Auto assign",
     "continueInDesktop": "Authorization successful, please continue in the desktop client.",
     "desktopMountSetup": "Mount to Desktop Client",
     "desktopMountSetupDescription": "Select the directory to mount to the desktop client.",

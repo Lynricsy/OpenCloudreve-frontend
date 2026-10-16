@@ -106,6 +106,7 @@ import {
   DownloadWorkflowService,
   ImportWorkflowService,
   ListTaskService,
+  NodeSummary,
   RebuildFTSIndexWorkflowService,
   SetDownloadFilesService,
   TaskListResponse,
@@ -880,6 +881,23 @@ export function getTasksPhaseProgress(id: string): ThunkResponse<TaskProgresses>
         "/workflow/progress/" + id,
         {
           method: "GET",
+        },
+        {
+          ...defaultOpts,
+        },
+      ),
+    );
+  };
+}
+
+export function getWorkflowNodes(capability: number): ThunkResponse<NodeSummary[]> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        "/workflow/nodes",
+        {
+          method: "GET",
+          params: { capability },
         },
         {
           ...defaultOpts,
