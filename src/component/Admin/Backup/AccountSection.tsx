@@ -140,6 +140,16 @@ const AccountSection = ({ status, loading, onRefresh }: AccountSectionProps) => 
             />
           </FormControl>
         </SettingForm>
+        <SettingForm title={t("backup.proxy")} lgWidth={5}>
+          <FormControl fullWidth>
+            <DenseFilledTextField
+              value={values.gdrive_backup_proxy ?? ""}
+              placeholder={"http://127.0.0.1:7890"}
+              onChange={(e) => setSettings({ gdrive_backup_proxy: e.target.value })}
+            />
+            <NoMarginHelperText>{t("backup.proxyDes")}</NoMarginHelperText>
+          </FormControl>
+        </SettingForm>
         <SettingForm title={t("backup.authorizationStatus")} lgWidth={5}>
           {loading && !status && <FacebookCircularProgress size={30} />}
           {status && (

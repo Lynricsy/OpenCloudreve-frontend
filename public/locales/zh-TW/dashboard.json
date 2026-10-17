@@ -1404,7 +1404,6 @@
     "startRestore": "開始還原",
     "restoreNothingSelected": "請至少選擇一個檔案或目錄。",
     "restoreTaskCreated": "還原任務已建立，可在任務列表中檢視進度。",
-    "settingsTab": "設定",
     "historyTab": "執行記錄",
     "viewHistory": "檢視執行記錄",
     "triggers": {

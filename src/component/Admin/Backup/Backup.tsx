@@ -1,69 +1,80 @@
-import { Box, Container, FormControl, FormControlLabel, Link, Stack, Switch, Typography } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { useQueryState } from "nuqs";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
 import { getBackupStatus } from "../../../api/api";
 import type { BackupStatus } from "../../../api/dashboard";
 import { useAppDispatch } from "../../../redux/hooks";
 import ResponsiveTabs, { Tab } from "../../Common/ResponsiveTabs";
-import { DenseFilledTextField } from "../../Common/StyledComponents";
+import Archive from "../../Icons/Archive";
 import HistoryOutlined from "../../Icons/HistoryOutlined";
+import LockClosedOutlined from "../../Icons/LockClosedOutlined";
+import PersonOutlined from "../../Icons/PersonOutlined";
+import Pulse from "../../Icons/Pulse";
 import SettingsOutlined from "../../Icons/SettingsOutlined";
 import PageContainer from "../../Pages/PageContainer";
 import PageHeader, { PageTabQuery } from "../../Pages/PageHeader";
-import SettingForm from "../../Pages/Setting/SettingForm";
-import MultiplePolicySelectionInput from "../Group/EditGroup/MultiplePolicySelectionInput";
-import { NoMarginHelperText, SettingSection, SettingSectionContent, StyledInputAdornment } from "../Settings/Settings";
 import SettingsWrapper, { SettingContext } from "../Settings/SettingWrapper";
 import AccountSection from "./AccountSection";
 import BackupHistory from "./BackupHistory";
+import BackupSettingsSection from "./BackupSettingsSection";
 import EncryptionSection from "./EncryptionSection";
 import RunStatusSection from "./RunStatusSection";
 import SnapshotSection from "./SnapshotSection";
 
 export enum BackupPageTab {
+  Overview = "overview",
+  Account = "account",
   Settings = "settings",
+  Encryption = "encryption",
+  Snapshots = "snapshots",
   History = "history",
 }
 
 // 备份任务运行时状态轮询间隔
 const runningPollInterval = 5000;
 
-const parsePolicies = (raw?: string): number[] => {
-  try {
-    const parsed = JSON.parse(raw || "[]");
-    return Array.isArray(parsed) ? parsed.filter((id) => typeof id === "number") : [];
-  } catch {
-    return [];
-  }
+// 各页签读取与保存的设置项。必须是模块级常量：SettingsWrapper 以数组引用为依赖重新拉取设置，
+// 内联数组会让父组件每次刷新状态时都重新拉取，并丢掉未保存的修改
+const accountSettings = ["gdrive_backup_client_id", "gdrive_backup_client_secret", "gdrive_backup_proxy"];
+const backupSettings = [
+  "gdrive_backup_enabled",
+  "gdrive_backup_policies",
+  "cron_gdrive_backup",
+  "gdrive_backup_retention_days",
+];
+const encryptionSettings = ["gdrive_backup_encrypt", "gdrive_backup_key"];
+const snapshotSettings = ["gdrive_backup_retention_days"];
+
+// 把 SettingsWrapper 的 formRef 绑定到页签内容，保存前校验必填项
+const SettingTabForm = ({ children }: { children: ReactNode }) => {
+  const { formRef } = useContext(SettingContext);
+  return (
+    <Box component={"form"} ref={formRef} onSubmit={(e) => e.preventDefault()}>
+      {children}
+    </Box>
+  );
 };
 
-export interface BackupProps {
-  // 切换到“运行记录”页签
-  onViewHistory: () => void;
-}
-
-const Backup = ({ onViewHistory }: BackupProps) => {
-  const { t } = useTranslation("dashboard");
+// 备份状态（授权、密钥、最近任务）由各页签共享；有备份任务在执行时定时静默刷新，任务结束后停止
+const useBackupStatus = () => {
   const dispatch = useAppDispatch();
-  const { formRef, setSettings, values } = useContext(SettingContext);
   const [status, setStatus] = useState<BackupStatus | undefined>(undefined);
-  const [statusLoading, setStatusLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const refreshStatus = useCallback(() => {
-    setStatusLoading(true);
+  const refresh = useCallback(() => {
+    setLoading(true);
     dispatch(getBackupStatus())
       .then((res) => setStatus(res))
       .catch(() => {})
-      .finally(() => setStatusLoading(false));
+      .finally(() => setLoading(false));
   }, [dispatch]);
 
   useEffect(() => {
-    refreshStatus();
-  }, [refreshStatus]);
+    refresh();
+  }, [refresh]);
 
-  // 有备份任务在执行时定时静默刷新状态，任务结束后停止
   useEffect(() => {
     if (!status?.running) {
       return;
@@ -76,121 +87,42 @@ const Backup = ({ onViewHistory }: BackupProps) => {
     return () => clearInterval(timer);
   }, [status?.running, dispatch]);
 
-  const policies = useMemo(() => parsePolicies(values.gdrive_backup_policies), [values.gdrive_backup_policies]);
-
-  return (
-    <Box component={"form"} ref={formRef} onSubmit={(e) => e.preventDefault()}>
-      <Stack spacing={5}>
-        <AccountSection status={status} loading={statusLoading} onRefresh={refreshStatus} />
-
-        <SettingSection>
-          <Typography variant="h6" gutterBottom>
-            {t("backup.backupSettings")}
-          </Typography>
-          <SettingSectionContent>
-            <SettingForm lgWidth={5}>
-              <FormControl fullWidth>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={values.gdrive_backup_enabled === "1"}
-                      onChange={(e) => setSettings({ gdrive_backup_enabled: e.target.checked ? "1" : "0" })}
-                    />
-                  }
-                  label={t("backup.enable")}
-                />
-                <NoMarginHelperText>{t("backup.enableDes")}</NoMarginHelperText>
-              </FormControl>
-            </SettingForm>
-            <SettingForm title={t("backup.policies")} lgWidth={5}>
-              <MultiplePolicySelectionInput
-                value={policies}
-                exclude={0}
-                onChange={(v) => setSettings({ gdrive_backup_policies: JSON.stringify(v) })}
-              />
-              <NoMarginHelperText>{t("backup.policiesDes")}</NoMarginHelperText>
-              <NoMarginHelperText>{t("backup.slavePoliciesDes")}</NoMarginHelperText>
-            </SettingForm>
-            <SettingForm title={t("backup.cron")} lgWidth={5}>
-              <FormControl fullWidth>
-                <DenseFilledTextField
-                  required
-                  value={values.cron_gdrive_backup ?? ""}
-                  placeholder={"0 3 * * *"}
-                  onChange={(e) => setSettings({ cron_gdrive_backup: e.target.value })}
-                />
-                <NoMarginHelperText>
-                  <Trans
-                    i18nKey="backup.cronDes"
-                    ns={"dashboard"}
-                    components={[<Link href="https://crontab.guru/" target="_blank" rel="noopener noreferrer" />]}
-                  />
-                </NoMarginHelperText>
-              </FormControl>
-            </SettingForm>
-            <SettingForm title={t("backup.retentionDays")} lgWidth={5}>
-              <FormControl fullWidth>
-                <DenseFilledTextField
-                  required
-                  value={values.gdrive_backup_retention_days ?? ""}
-                  onChange={(e) => setSettings({ gdrive_backup_retention_days: e.target.value })}
-                  slotProps={{
-                    input: {
-                      type: "number",
-                      inputProps: {
-                        min: 1,
-                        step: 1,
-                      },
-                      endAdornment: (
-                        <StyledInputAdornment disableTypography position="end">
-                          {t("backup.days")}
-                        </StyledInputAdornment>
-                      ),
-                    },
-                  }}
-                />
-                <NoMarginHelperText>{t("backup.retentionDaysDes")}</NoMarginHelperText>
-              </FormControl>
-            </SettingForm>
-            <SettingForm title={t("backup.proxy")} lgWidth={5}>
-              <FormControl fullWidth>
-                <DenseFilledTextField
-                  value={values.gdrive_backup_proxy ?? ""}
-                  placeholder={"http://127.0.0.1:7890"}
-                  onChange={(e) => setSettings({ gdrive_backup_proxy: e.target.value })}
-                />
-                <NoMarginHelperText>{t("backup.proxyDes")}</NoMarginHelperText>
-              </FormControl>
-            </SettingForm>
-          </SettingSectionContent>
-        </SettingSection>
-
-        <EncryptionSection status={status} />
-
-        <RunStatusSection
-          status={status}
-          loading={statusLoading}
-          onRefresh={refreshStatus}
-          onViewHistory={onViewHistory}
-        />
-
-        <SnapshotSection authorized={!!status?.authorized} />
-      </Stack>
-    </Box>
-  );
+  return { status, loading, refresh };
 };
 
-// 后台侧边栏“备份”页面：设置页签中的备份设置项由 SettingsWrapper 统一读取与保存，运行记录页签列出备份/恢复任务
+// 后台侧边栏“备份”页面：按运行状态、账号、备份设置、加密、快照与恢复、运行记录分页签展示，
+// 设置类页签各自由 SettingsWrapper 读取与保存
 const BackupPage = () => {
   const { t } = useTranslation("dashboard");
   const [tab, setTab] = useQueryState(PageTabQuery);
+  const { status, loading, refresh } = useBackupStatus();
 
   const tabs: Tab<BackupPageTab>[] = useMemo(
     () => [
       {
-        label: t("backup.settingsTab"),
+        label: t("backup.runStatus"),
+        value: BackupPageTab.Overview,
+        icon: <Pulse />,
+      },
+      {
+        label: t("backup.googleAccount"),
+        value: BackupPageTab.Account,
+        icon: <PersonOutlined />,
+      },
+      {
+        label: t("backup.backupSettings"),
         value: BackupPageTab.Settings,
         icon: <SettingsOutlined />,
+      },
+      {
+        label: t("backup.encryption"),
+        value: BackupPageTab.Encryption,
+        icon: <LockClosedOutlined />,
+      },
+      {
+        label: t("backup.snapshots"),
+        value: BackupPageTab.Snapshots,
+        icon: <Archive />,
       },
       {
         label: t("backup.historyTab"),
@@ -201,40 +133,61 @@ const BackupPage = () => {
     [t],
   );
 
+  const current = tabs.some((item) => item.value === tab) ? (tab as BackupPageTab) : BackupPageTab.Overview;
+
   return (
     <PageContainer>
       <Container maxWidth="xl">
         <PageHeader title={t("nav.backup")} />
-        <ResponsiveTabs
-          value={tab ?? BackupPageTab.Settings}
-          onChange={(_e, newValue) => setTab(newValue)}
-          tabs={tabs}
-        />
+        <ResponsiveTabs value={current} onChange={(_e, newValue) => setTab(newValue)} tabs={tabs} />
         <SwitchTransition>
           <CSSTransition
             addEndListener={(node, done) => node.addEventListener("transitionend", done, false)}
             classNames="fade"
-            key={`${tab}`}
+            key={current}
           >
             <Box>
-              {(!tab || tab === BackupPageTab.Settings) && (
-                <SettingsWrapper
-                  settings={[
-                    "gdrive_backup_enabled",
-                    "gdrive_backup_client_id",
-                    "gdrive_backup_client_secret",
-                    "gdrive_backup_policies",
-                    "gdrive_backup_retention_days",
-                    "gdrive_backup_encrypt",
-                    "gdrive_backup_key",
-                    "gdrive_backup_proxy",
-                    "cron_gdrive_backup",
-                  ]}
-                >
-                  <Backup onViewHistory={() => setTab(BackupPageTab.History)} />
+              {current === BackupPageTab.Overview && (
+                <Box sx={{ mt: 3 }}>
+                  <RunStatusSection
+                    status={status}
+                    loading={loading}
+                    onRefresh={refresh}
+                    onViewHistory={() => setTab(BackupPageTab.History)}
+                  />
+                </Box>
+              )}
+              {current === BackupPageTab.Account && (
+                <SettingsWrapper settings={accountSettings}>
+                  <SettingTabForm>
+                    <AccountSection status={status} loading={loading} onRefresh={refresh} />
+                  </SettingTabForm>
                 </SettingsWrapper>
               )}
-              {tab === BackupPageTab.History && <BackupHistory />}
+              {current === BackupPageTab.Settings && (
+                <SettingsWrapper settings={backupSettings}>
+                  <SettingTabForm>
+                    <BackupSettingsSection />
+                  </SettingTabForm>
+                </SettingsWrapper>
+              )}
+              {current === BackupPageTab.Encryption && (
+                <SettingsWrapper settings={encryptionSettings}>
+                  <SettingTabForm>
+                    <EncryptionSection status={status} />
+                  </SettingTabForm>
+                </SettingsWrapper>
+              )}
+              {current === BackupPageTab.Snapshots && (
+                <SettingsWrapper settings={snapshotSettings}>
+                  <SnapshotSection authorized={!!status?.authorized} />
+                </SettingsWrapper>
+              )}
+              {current === BackupPageTab.History && (
+                <Box sx={{ mt: 3 }}>
+                  <BackupHistory />
+                </Box>
+              )}
             </Box>
           </CSSTransition>
         </SwitchTransition>

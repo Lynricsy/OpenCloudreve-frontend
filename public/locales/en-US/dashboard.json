@@ -1406,7 +1406,6 @@
     "startRestore": "Restore",
     "restoreNothingSelected": "Select at least one file or folder.",
     "restoreTaskCreated": "Restore task created. Check its progress in the task list.",
-    "settingsTab": "Settings",
     "historyTab": "Run history",
     "viewHistory": "View run history",
     "triggers": {

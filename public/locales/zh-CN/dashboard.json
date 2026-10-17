@@ -1406,7 +1406,6 @@
     "startRestore": "开始恢复",
     "restoreNothingSelected": "请至少选择一个文件或目录。",
     "restoreTaskCreated": "恢复任务已创建，可在任务列表中查看进度。",
-    "settingsTab": "设置",
     "historyTab": "运行记录",
     "viewHistory": "查看运行记录",
     "triggers": {

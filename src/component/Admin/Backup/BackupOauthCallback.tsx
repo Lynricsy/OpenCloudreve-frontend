@@ -11,7 +11,7 @@ import { DefaultCloseAction } from "../../Common/Snackbar/snackbar";
 import PageContainer from "../../Pages/PageContainer";
 import PageHeader from "../../Pages/PageHeader";
 
-// Google Drive 备份授权回调页：把 Google 返回的 code/state 交给后端换取刷新令牌，完成后回到备份页面
+// Google Drive 备份授权回调页：把 Google 返回的 code/state 交给后端换取刷新令牌，完成后回到备份页面的账号页签
 const BackupOauthCallback = () => {
   const { t } = useTranslation("dashboard");
   const dispatch = useAppDispatch();
@@ -21,7 +21,7 @@ const BackupOauthCallback = () => {
   const query = useQuery();
 
   useEffect(() => {
-    const backupUrl = "/admin/backup";
+    const backupUrl = "/admin/backup?tab=account";
     const code = query.get("code");
     const state = query.get("state");
     if (code && state) {
