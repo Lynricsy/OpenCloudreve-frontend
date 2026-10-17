@@ -14,6 +14,8 @@ import Save from "../../Icons/Save.tsx";
 export interface SettingsWrapperProps {
   settings: string[];
   children: React.ReactNode;
+  // 保存成功后回调，用于刷新依赖已保存设置的状态
+  onSaved?: () => void;
 }
 
 export interface SettingContextProps {
@@ -79,7 +81,7 @@ export const SettingContext = createContext<SettingContextProps>({
   setSettings: () => {},
 });
 
-const SettingsWrapper = ({ settings, children }: SettingsWrapperProps) => {
+const SettingsWrapper = ({ settings, children, onSaved }: SettingsWrapperProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("dashboard");
   const [values, setValues] = useState<{ [key: string]: string }>({});
@@ -141,6 +143,7 @@ const SettingsWrapper = ({ settings, children }: SettingsWrapperProps) => {
       .then((res) => {
         setValues((s) => ({ ...s, ...res }));
         setModifiedValues((s) => ({ ...s, ...res }));
+        onSaved?.();
       })
       .finally(() => {
         setSubmitting(false);

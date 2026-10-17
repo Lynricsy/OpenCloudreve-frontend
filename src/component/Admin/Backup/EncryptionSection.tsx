@@ -3,35 +3,67 @@ import {
   AlertTitle,
   Box,
   FormControl,
-  FormControlLabel,
   IconButton,
   InputAdornment,
+  Stack,
   Switch,
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useContext, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { generateBackupKey } from "../../../api/api";
 import { BackupPlainKeyID } from "../../../api/dashboard";
 import type { BackupStatus } from "../../../api/dashboard";
 import { useAppDispatch } from "../../../redux/hooks";
 import { confirmOperation } from "../../../redux/thunks/dialog";
 import { copyToClipboard } from "../../../util";
-import { Code } from "../../Common/Code";
 import { DefaultCloseAction } from "../../Common/Snackbar/snackbar";
 import { DenseFilledTextField, SecondaryLoadingButton } from "../../Common/StyledComponents";
 import ArrowSync from "../../Icons/ArrowSync";
 import CopyOutlined from "../../Icons/CopyOutlined";
 import Eye from "../../Icons/Eye";
 import EyeOff from "../../Icons/EyeOff";
+import LockClosedKey from "../../Icons/LockClosedKey";
+import LockClosedOutlined from "../../Icons/LockClosedOutlined";
 import SettingForm from "../../Pages/Setting/SettingForm";
-import { NoMarginHelperText, SettingSection, SettingSectionContent } from "../Settings/Settings";
+import { NoMarginHelperText } from "../Settings/Settings";
 import { SettingContext } from "../Settings/SettingWrapper";
+import { BackupCard, BackupCardHeader } from "./BackupUi";
 
 export interface EncryptionSectionProps {
   status?: BackupStatus;
 }
+
+// 公钥展示块：等宽字体、可复制
+const KeyIdBlock = ({ label, keyId }: { label: string; keyId: string }) => {
+  const { t } = useTranslation("dashboard");
+  return (
+    <Box
+      sx={(theme) => ({
+        p: 1.5,
+        pl: 2,
+        borderRadius: `${theme.shape.borderRadius}px`,
+        backgroundColor: theme.palette.action.hover,
+        display: "flex",
+        alignItems: "center",
+        gap: 1,
+      })}
+    >
+      <Box sx={{ minWidth: 0, flexGrow: 1 }}>
+        <Typography variant="caption" color="text.secondary">
+          {label}
+        </Typography>
+        <Typography variant="body2" sx={{ fontFamily: "monospace", overflowWrap: "anywhere" }}>
+          {keyId}
+        </Typography>
+      </Box>
+      <IconButton size="small" aria-label={t("backup.copy")} onClick={() => copyToClipboard(keyId)}>
+        <CopyOutlined fontSize="small" />
+      </IconButton>
+    </Box>
+  );
+};
 
 const EncryptionSection = ({ status }: EncryptionSectionProps) => {
   const { t } = useTranslation("dashboard");
@@ -45,6 +77,7 @@ const EncryptionSection = ({ status }: EncryptionSectionProps) => {
 
   const encrypt = values.gdrive_backup_encrypt === "1";
   const key = values.gdrive_backup_key ?? "";
+  // 状态来自已保存的设置，开关改动保存前不影响这里
   const activeKeyId = status?.key_id && status.key_id !== BackupPlainKeyID ? status.key_id : undefined;
 
   const generate = () => {
@@ -66,38 +99,58 @@ const EncryptionSection = ({ status }: EncryptionSectionProps) => {
   };
 
   return (
-    <SettingSection>
-      <Typography variant="h6" gutterBottom>
-        {t("backup.encryption")}
-      </Typography>
-      <SettingSectionContent>
-        <SettingForm lgWidth={5}>
-          <FormControl fullWidth>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={encrypt}
-                  onChange={(e) => setSettings({ gdrive_backup_encrypt: e.target.checked ? "1" : "0" })}
-                />
-              }
-              label={t("backup.enableEncryption")}
-            />
-            <NoMarginHelperText>{t("backup.enableEncryptionDes")}</NoMarginHelperText>
-          </FormControl>
-        </SettingForm>
-        {encrypt && (
-          <>
-            <SettingForm lgWidth={5}>
-              <Alert severity="warning" sx={{ fontSize: (theme) => theme.typography.body2.fontSize }}>
-                <AlertTitle>{t("backup.keyWarningTitle")}</AlertTitle>
-                <ul style={{ paddingInlineStart: "20px", margin: 0 }}>
-                  {(t("backup.keyWarnings", { returnObjects: true }) as string[]).map((warning, index) => (
-                    <li key={index}>{warning}</li>
-                  ))}
-                </ul>
-              </Alert>
-            </SettingForm>
-            <SettingForm title={t("backup.key")} lgWidth={5}>
+    <Stack spacing={2}>
+      <BackupCard>
+        <BackupCardHeader
+          icon={<LockClosedOutlined />}
+          tone={activeKeyId ? "success" : "neutral"}
+          title={activeKeyId ? t("backup.encryptionOn") : t("backup.encryptionOff")}
+          subtitle={t("backup.enableEncryptionDes")}
+          action={
+            <Stack direction="row" spacing={0.5} alignItems="center">
+              <Typography variant="body2" color="text.secondary">
+                {t("backup.enableEncryption")}
+              </Typography>
+              <Switch
+                checked={encrypt}
+                inputProps={{ "aria-label": t("backup.enableEncryption") }}
+                onChange={(e) => setSettings({ gdrive_backup_encrypt: e.target.checked ? "1" : "0" })}
+              />
+            </Stack>
+          }
+          dense={!activeKeyId}
+        />
+        {activeKeyId && <KeyIdBlock label={t("backup.activePublicKey")} keyId={activeKeyId} />}
+      </BackupCard>
+
+      {encrypt && (
+        <BackupCard>
+          <BackupCardHeader
+            icon={<LockClosedKey />}
+            tone="warning"
+            title={t("backup.key")}
+            subtitle={t("backup.keyDes")}
+            action={
+              <SecondaryLoadingButton
+                variant="contained"
+                startIcon={<ArrowSync />}
+                loading={generating}
+                onClick={generate}
+              >
+                <span>{t("backup.generateKey")}</span>
+              </SecondaryLoadingButton>
+            }
+          />
+          <Stack spacing={2}>
+            <Alert severity="warning">
+              <AlertTitle>{t("backup.keyWarningTitle")}</AlertTitle>
+              <Box component="ul" sx={{ paddingInlineStart: "20px", m: 0 }}>
+                {(t("backup.keyWarnings", { returnObjects: true }) as string[]).map((warning, index) => (
+                  <li key={index}>{warning}</li>
+                ))}
+              </Box>
+            </Alert>
+            <SettingForm lgWidth={12}>
               <FormControl fullWidth>
                 <DenseFilledTextField
                   required
@@ -109,13 +162,23 @@ const EncryptionSection = ({ status }: EncryptionSectionProps) => {
                     setGeneratedKeyId(undefined);
                   }}
                   slotProps={{
+                    htmlInput: { spellCheck: false, style: { fontFamily: "monospace" } },
                     input: {
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton size="small" onClick={() => setShowKey((s) => !s)}>
+                          <IconButton
+                            size="small"
+                            aria-label={t("backup.toggleVisibility")}
+                            onClick={() => setShowKey((s) => !s)}
+                          >
                             {showKey ? <EyeOff fontSize="small" /> : <Eye fontSize="small" />}
                           </IconButton>
-                          <IconButton size="small" disabled={!key} onClick={() => copyToClipboard(key)}>
+                          <IconButton
+                            size="small"
+                            aria-label={t("backup.copy")}
+                            disabled={!key}
+                            onClick={() => copyToClipboard(key)}
+                          >
                             <CopyOutlined fontSize="small" />
                           </IconButton>
                         </InputAdornment>
@@ -123,44 +186,18 @@ const EncryptionSection = ({ status }: EncryptionSectionProps) => {
                     },
                   }}
                 />
-                <NoMarginHelperText>{t("backup.keyDes")}</NoMarginHelperText>
-                {activeKeyId && (
-                  <NoMarginHelperText sx={{ overflowWrap: "anywhere" }}>
-                    <Trans
-                      i18nKey="backup.activeKeyId"
-                      ns="dashboard"
-                      values={{ keyId: activeKeyId }}
-                      components={[<Code />]}
-                    />
-                  </NoMarginHelperText>
-                )}
                 {generatedKeyId && generatedKeyId !== activeKeyId && (
-                  <NoMarginHelperText sx={{ overflowWrap: "anywhere" }}>
-                    <Trans
-                      i18nKey="backup.newKeyId"
-                      ns="dashboard"
-                      values={{ keyId: generatedKeyId }}
-                      components={[<Code />]}
-                    />
-                  </NoMarginHelperText>
+                  <NoMarginHelperText>{t("backup.keyGenerated")}</NoMarginHelperText>
                 )}
               </FormControl>
-              <Box sx={{ mt: 1 }}>
-                <SecondaryLoadingButton
-                  variant="contained"
-                  size="small"
-                  startIcon={<ArrowSync />}
-                  loading={generating}
-                  onClick={generate}
-                >
-                  <span>{t("backup.generateKey")}</span>
-                </SecondaryLoadingButton>
-              </Box>
             </SettingForm>
-          </>
-        )}
-      </SettingSectionContent>
-    </SettingSection>
+            {generatedKeyId && generatedKeyId !== activeKeyId && (
+              <KeyIdBlock label={t("backup.newPublicKey")} keyId={generatedKeyId} />
+            )}
+          </Stack>
+        </BackupCard>
+      )}
+    </Stack>
   );
 };
 

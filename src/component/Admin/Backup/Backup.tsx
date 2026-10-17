@@ -22,15 +22,7 @@ import BackupSettingsSection from "./BackupSettingsSection";
 import EncryptionSection from "./EncryptionSection";
 import RunStatusSection from "./RunStatusSection";
 import SnapshotSection from "./SnapshotSection";
-
-export enum BackupPageTab {
-  Overview = "overview",
-  Account = "account",
-  Settings = "settings",
-  Encryption = "encryption",
-  Snapshots = "snapshots",
-  History = "history",
-}
+import { BackupPageTab } from "./BackupUi";
 
 // 备份任务运行时状态轮询间隔
 const runningPollInterval = 5000;
@@ -149,16 +141,11 @@ const BackupPage = () => {
             <Box>
               {current === BackupPageTab.Overview && (
                 <Box sx={{ mt: 3 }}>
-                  <RunStatusSection
-                    status={status}
-                    loading={loading}
-                    onRefresh={refresh}
-                    onViewHistory={() => setTab(BackupPageTab.History)}
-                  />
+                  <RunStatusSection status={status} loading={loading} onRefresh={refresh} onNavigate={setTab} />
                 </Box>
               )}
               {current === BackupPageTab.Account && (
-                <SettingsWrapper settings={accountSettings}>
+                <SettingsWrapper settings={accountSettings} onSaved={refresh}>
                   <SettingTabForm>
                     <AccountSection status={status} loading={loading} onRefresh={refresh} />
                   </SettingTabForm>
@@ -172,7 +159,7 @@ const BackupPage = () => {
                 </SettingsWrapper>
               )}
               {current === BackupPageTab.Encryption && (
-                <SettingsWrapper settings={encryptionSettings}>
+                <SettingsWrapper settings={encryptionSettings} onSaved={refresh}>
                   <SettingTabForm>
                     <EncryptionSection status={status} />
                   </SettingTabForm>
@@ -180,7 +167,7 @@ const BackupPage = () => {
               )}
               {current === BackupPageTab.Snapshots && (
                 <SettingsWrapper settings={snapshotSettings}>
-                  <SnapshotSection authorized={!!status?.authorized} />
+                  <SnapshotSection authorized={!!status?.authorized} onNavigate={setTab} />
                 </SettingsWrapper>
               )}
               {current === BackupPageTab.History && (

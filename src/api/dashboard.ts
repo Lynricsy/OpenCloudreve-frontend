@@ -543,6 +543,9 @@ export interface BackupSummary {
   deleted_snapshots: number;
   deleted_blobs: number;
   errors?: string[];
+  // 备份完成后生成的快照名
+  snapshot?: string;
+  trigger?: GDriveBackupTrigger;
 }
 
 export interface BackupLastTask {
