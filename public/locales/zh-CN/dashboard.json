@@ -1495,7 +1495,7 @@
     "events": {
       "started": "开始备份（{{trigger}}）：存储策略 ID {{policies}}，{{encrypted}}",
       "prev_snapshot_loaded": "已读取上一份快照 {{snapshot}}（{{files}} 个文件），未变化的文件将直接复用",
-      "prev_snapshot_unreadable": "无法读取快照 {{snapshot}}，改试更早的快照：{{error}}",
+      "prev_snapshot_unreadable": "无法读取上一份快照 {{snapshot}}，本次运行稍后重试：{{error}}",
       "no_prev_snapshot": "没有可复用的快照，本次为全量备份",
       "blobs_listed": "Google Drive 上已有 {{count}} 个数据块",
       "scan_done": "扫描完成：{{files}} 个文件，共 {{size}}；{{pending}} 个仍在上传中而跳过，{{remote}} 个交由从机处理",

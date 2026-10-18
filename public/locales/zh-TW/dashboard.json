@@ -1493,7 +1493,7 @@
     "events": {
       "started": "開始備份（{{trigger}}）：儲存策略 ID {{policies}}，{{encrypted}}",
       "prev_snapshot_loaded": "已讀取上一份快照 {{snapshot}}（{{files}} 個檔案），未變化的檔案將直接重用",
-      "prev_snapshot_unreadable": "無法讀取快照 {{snapshot}}，改試更早的快照：{{error}}",
+      "prev_snapshot_unreadable": "無法讀取上一份快照 {{snapshot}}，本次執行稍後重試：{{error}}",
       "no_prev_snapshot": "沒有可重用的快照，本次為完整備份",
       "blobs_listed": "Google Drive 上已有 {{count}} 個資料區塊",
       "scan_done": "掃描完成：{{files}} 個檔案，共 {{size}}；{{pending}} 個仍在上傳中而略過，{{remote}} 個交由從機處理",

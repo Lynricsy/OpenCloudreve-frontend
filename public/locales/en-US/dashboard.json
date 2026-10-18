@@ -1495,7 +1495,7 @@
     "events": {
       "started": "Backup started ({{trigger}}): storage policy IDs {{policies}}, {{encrypted}}",
       "prev_snapshot_loaded": "Loaded previous snapshot {{snapshot}} ({{files}} files); unchanged files will be reused",
-      "prev_snapshot_unreadable": "Cannot read snapshot {{snapshot}}, trying an older one: {{error}}",
+      "prev_snapshot_unreadable": "Cannot read previous snapshot {{snapshot}}; the run will retry later: {{error}}",
       "no_prev_snapshot": "No reusable snapshot; performing a full backup",
       "blobs_listed": "Found {{count}} existing blob(s) on Google Drive",
       "scan_done": "Scan finished: {{files}} files, {{size}} in total; {{pending}} skipped (still uploading), {{remote}} handed to slave nodes",
