@@ -454,7 +454,25 @@
     "noEncryption": "未加密",
     "ftsStatus": "全文索引",
     "ftsIndexed": "已索引",
-    "ftsNotIndexed": "未索引"
+    "ftsNotIndexed": "未索引",
+    "sha256": "SHA-256",
+    "copySha256": "複製 SHA-256",
+    "sha256Pending": "計算中…",
+    "sha256Uploading": "等待上傳完成",
+    "sha256Missing": "未計算",
+    "sha256Failed": "計算失敗（{{reason}}）",
+    "sha256Unsupported": "目前儲存策略不支援",
+    "sha256LoadFailed": "取得失敗",
+    "sha256Error": "取得失敗：{{reason}}",
+    "sha256FailReasons": {
+      "read_failed": "讀取檔案失敗",
+      "size_mismatch": "檔案大小不一致",
+      "hash_conflict": "檔案內容已變更",
+      "key_failed": "無法解密檔案金鑰",
+      "slave_outdated": "從機版本過舊",
+      "slave_lost": "從機任務遺失",
+      "task_failed": "計算任務失敗"
+    }
   },
   "modals": {
     "includePasswordInShareLink": "在連結中包含密碼",

@@ -58,6 +58,8 @@ import {
   DeleteUploadSessionService,
   DirectLink,
   FileResponse,
+  FileHashResponse,
+  FileHashService,
   FileThumbResponse,
   FileUpdateService,
   FileURLResponse,
@@ -647,6 +649,25 @@ export function getFileInfo(req: GetFileInfoService, skipError = false): ThunkRe
         {
           method: "GET",
           params: req,
+        },
+        {
+          ...defaultOpts,
+          bypassSnackbar: () => skipError,
+        },
+      ),
+    );
+  };
+}
+
+// 查询文件内容的 SHA-256；compute 为 true 时对尚未计算的文件发起后台计算
+export function getFileHash(req: FileHashService, skipError = true): ThunkResponse<FileHashResponse> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        "/file/hash",
+        {
+          data: req,
+          method: "POST",
         },
         {
           ...defaultOpts,

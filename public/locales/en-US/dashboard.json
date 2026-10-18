@@ -1283,6 +1283,8 @@
     "full_text_rebuild": "Rebuild full-text search index",
     "gdrive_backup": "Google Drive backup",
     "gdrive_restore": "Google Drive restore",
+    "entity_hash": "File hash computation",
+    "entityHash": "Compute SHA-256 of file blobs: {{blobs}}",
     "fullTextIndex": "Build full-text index for file <0>#{{fileID}}</0>",
     "fullTextCopy": "Copy full-text index for file <0>#{{fileID}}</0>",
     "fullTextChangeOwner": "Change index owner for file <0>#{{fileID}}</0>",

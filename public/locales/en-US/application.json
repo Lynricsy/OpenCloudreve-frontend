@@ -465,7 +465,25 @@
     "noEncryption": "Not encrypted",
     "ftsStatus": "Full-text index",
     "ftsIndexed": "Indexed",
-    "ftsNotIndexed": "Not indexed"
+    "ftsNotIndexed": "Not indexed",
+    "sha256": "SHA-256",
+    "copySha256": "Copy SHA-256",
+    "sha256Pending": "Computing…",
+    "sha256Uploading": "Waiting for upload to finish",
+    "sha256Missing": "Not computed",
+    "sha256Failed": "Failed ({{reason}})",
+    "sha256Unsupported": "Not supported by current storage policy",
+    "sha256LoadFailed": "Failed to load",
+    "sha256Error": "Failed to load: {{reason}}",
+    "sha256FailReasons": {
+      "read_failed": "failed to read file",
+      "size_mismatch": "size mismatch",
+      "hash_conflict": "content changed",
+      "key_failed": "failed to decrypt file key",
+      "slave_outdated": "slave node outdated",
+      "slave_lost": "slave task lost",
+      "task_failed": "task failed"
+    }
   },
   "modals": {
     "includePasswordInShareLink": "Include password in share link",

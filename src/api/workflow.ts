@@ -163,6 +163,7 @@ export enum TaskType {
   full_text_rebuild = "full_text_rebuild",
   gdrive_backup = "gdrive_backup",
   gdrive_restore = "gdrive_restore",
+  entity_hash = "entity_hash",
 }
 
 export enum TaskStatus {

@@ -69,6 +69,8 @@ export interface Entity {
   size: number;
   created_by?: User;
   encrypted_with?: EncryptionCipher;
+  // 文件内容的 SHA-256，仅在已计算完成时返回
+  sha256?: string;
 }
 
 export interface Share {
@@ -346,6 +348,36 @@ export interface GetFileInfoService {
   id?: string;
   extended?: boolean;
   folder_summary?: boolean;
+}
+
+// POST /file/hash 请求：compute 为 true 时对尚未计算的文件发起后台计算（仅自己空间内生效）
+export interface FileHashService extends MultipleUriService {
+  compute?: boolean;
+}
+
+export enum FileHashStatus {
+  ready = "ready",
+  pending = "pending",
+  missing = "missing",
+  uploading = "uploading",
+  failed = "failed",
+  unsupported = "unsupported",
+  not_file = "not_file",
+  error = "error",
+}
+
+export interface FileHashItem {
+  uri: string;
+  entity_id?: string;
+  size: number;
+  sha256?: string;
+  status: FileHashStatus;
+  // failed 时为原因代码，error 时为错误信息
+  reason?: string;
+}
+
+export interface FileHashResponse {
+  items: FileHashItem[];
 }
 
 export enum EntityType {

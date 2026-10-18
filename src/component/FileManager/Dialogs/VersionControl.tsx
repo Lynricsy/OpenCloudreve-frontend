@@ -12,6 +12,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -21,7 +22,7 @@ import { confirmOperation } from "../../../redux/thunks/dialog.ts";
 import { downloadSingleFile } from "../../../redux/thunks/download.ts";
 import { setFileVersion } from "../../../redux/thunks/file.ts";
 import { openViewers } from "../../../redux/thunks/viewer.ts";
-import { sizeToString } from "../../../util";
+import { copyToClipboard, sizeToString } from "../../../util";
 import AutoHeight from "../../Common/AutoHeight.tsx";
 import { closeVersionControlDialog } from "../../../redux/globalStateSlice.ts";
 import { Entity, EntityType, FileResponse } from "../../../api/explorer.ts";
@@ -182,6 +183,17 @@ const VersionControl = () => {
         <SquareMenuItem onClick={downloadEntity} dense>
           <ListItemText>{t("application:fileManager.download")}</ListItemText>
         </SquareMenuItem>
+        {actionTarget?.sha256 && (
+          <SquareMenuItem
+            onClick={() => {
+              copyToClipboard(actionTarget.sha256 ?? "");
+              setAnchorEl(null);
+            }}
+            dense
+          >
+            <ListItemText>{t("application:fileManager.copySha256")}</ListItemText>
+          </SquareMenuItem>
+        )}
         {canManageFile(target) && actionTarget?.id !== fileExtended?.primary_entity && (
           <SquareMenuItem onClick={setAsCurrent} dense>
             <ListItemText>{t("application:fileManager.setAsCurrent")}</ListItemText>
@@ -222,6 +234,7 @@ const VersionControl = () => {
                     {showEncryptionStatus && (
                       <NoWrapTableCell>{t("application:fileManager.encryption")}</NoWrapTableCell>
                     )}
+                    <NoWrapTableCell>{t("application:fileManager.sha256")}</NoWrapTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -281,6 +294,17 @@ const VersionControl = () => {
                             />
                           </NoWrapTableCell>
                         )}
+                        <NoWrapTableCell>
+                          {e.sha256 ? (
+                            <Tooltip title={e.sha256}>
+                              <Box component={"span"} sx={{ fontFamily: "monospace" }}>
+                                {e.sha256.slice(0, 8)}…
+                              </Box>
+                            </Tooltip>
+                          ) : (
+                            "-"
+                          )}
+                        </NoWrapTableCell>
                       </TableRow>
                     ))}
                 </TableBody>

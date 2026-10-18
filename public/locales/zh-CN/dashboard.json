@@ -1283,6 +1283,8 @@
     "full_text_rebuild": "重建全文搜索索引",
     "gdrive_backup": "Google Drive 备份",
     "gdrive_restore": "Google Drive 恢复",
+    "entity_hash": "文件哈希计算",
+    "entityHash": "计算文件 Blob 的 SHA-256：{{blobs}}",
     "fullTextIndex": "为文件 <0>#{{fileID}}</0> 建立全文索引",
     "fullTextCopy": "复制文件 <0>#{{fileID}}</0> 的全文索引",
     "fullTextChangeOwner": "变更文件 <0>#{{fileID}}</0> 的索引所有者",

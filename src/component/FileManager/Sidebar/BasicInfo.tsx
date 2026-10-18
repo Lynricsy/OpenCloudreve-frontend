@@ -19,6 +19,7 @@ import TimeBadge from "../../Common/TimeBadge.tsx";
 import ShieldDismiss from "../../Icons/ShieldDismiss.tsx";
 import ShieldLockFilled from "../../Icons/ShieldLockFilled.tsx";
 import FileBadge from "../FileBadge.tsx";
+import FileHash from "./FileHash.tsx";
 import InfoRow from "./InfoRow.tsx";
 
 export interface BasicInfoProps {
@@ -350,6 +351,7 @@ const BasicInfo = ({ target }: BasicInfoProps) => {
               )
             }
           />
+          {!isSymbolicLink && <FileHash target={target} />}
           {showEncryptionStatus && encryptionStatus && (
             <InfoRow title={t("application:fileManager.encryption")} content={encryptionStatus} />
           )}

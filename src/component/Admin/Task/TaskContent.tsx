@@ -135,6 +135,10 @@ export const TaskContent = memo(({ task, openEntity, openFile }: TaskContentProp
         return t("task.fullTextDelete", {
           count: privateState?.file_ids?.length ?? 0,
         });
+      case TaskType.entity_hash:
+        return t("task.entityHash", {
+          blobs: privateState?.entity_ids?.map((id: number) => `#${id}`).join(", "),
+        });
       default:
         return "";
     }

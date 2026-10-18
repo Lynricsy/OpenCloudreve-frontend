@@ -1281,6 +1281,8 @@
     "full_text_rebuild": "重建全文搜尋索引",
     "gdrive_backup": "Google Drive 備份",
     "gdrive_restore": "Google Drive 還原",
+    "entity_hash": "檔案雜湊計算",
+    "entityHash": "計算檔案 Blob 的 SHA-256：{{blobs}}",
     "fullTextIndex": "為檔案 <0>#{{fileID}}</0> 建立全文索引",
     "fullTextCopy": "複製檔案 <0>#{{fileID}}</0> 的全文索引",
     "fullTextChangeOwner": "變更檔案 <0>#{{fileID}}</0> 的索引所有者",
