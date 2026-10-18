@@ -52,6 +52,8 @@ export interface TaskSummary {
     uploaded_size?: number;
     reused?: number;
     pending?: number;
+    // 当天上传额度不足、延后到下次运行的文件数
+    deferred?: number;
     deleted_snapshots?: number;
     deleted_blobs?: number;
     // Google Drive 备份触发方式：cron | manual，旧任务没有

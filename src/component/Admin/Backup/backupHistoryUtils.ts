@@ -18,7 +18,7 @@ dayjs.extend(duration);
 export const historyPollInterval = 5000;
 
 // 以字节为单位、需要格式化为可读大小的事件参数
-const sizeParams: Record<string, true> = { size: true, uploaded_size: true };
+const sizeParams: Record<string, true> = { size: true, uploaded_size: true, limit: true };
 
 // 从机批次相关事件，用于推算从机阶段的结束时间
 const remoteEventCodes: Record<string, true> = {

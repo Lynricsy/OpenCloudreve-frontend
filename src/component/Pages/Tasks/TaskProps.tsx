@@ -86,6 +86,7 @@ export const getGDriveTaskStats = (
       },
       { label: t("application:setting.gdriveReused"), value: props?.reused ?? 0 },
       { label: t("application:setting.gdrivePending"), value: props?.pending ?? 0 },
+      { label: t("application:setting.gdriveDeferred"), value: props?.deferred ?? 0 },
       { label: t("application:setting.gdriveFailed"), value: props?.failed ?? 0 },
       { label: t("application:setting.gdriveDeletedSnapshots"), value: props?.deleted_snapshots ?? 0 },
       { label: t("application:setting.gdriveDeletedBlobs"), value: props?.deleted_blobs ?? 0 },

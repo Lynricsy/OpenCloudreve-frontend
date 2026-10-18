@@ -35,6 +35,7 @@ const backupSettings = [
   "gdrive_backup_policies",
   "cron_gdrive_backup",
   "gdrive_backup_retention_days",
+  "gdrive_backup_daily_limit",
 ];
 const encryptionSettings = ["gdrive_backup_encrypt", "gdrive_backup_key"];
 const snapshotSettings = ["gdrive_backup_retention_days"];

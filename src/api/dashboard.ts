@@ -540,6 +540,8 @@ export interface BackupSummary {
   reused: number;
   pending: number;
   failed: number;
+  // 当天上传额度不足、延后到下次运行的文件数；旧任务没有该字段
+  deferred?: number;
   deleted_snapshots: number;
   deleted_blobs: number;
   errors?: string[];
@@ -686,6 +688,7 @@ export interface GDriveBackupStats {
   reused: number;
   pending: number;
   failed: number;
+  deferred?: number;
   deleted_snapshots: number;
   deleted_blobs: number;
   snapshot?: string;

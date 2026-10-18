@@ -1000,6 +1000,7 @@
     "gdriveUploaded": "新上傳",
     "gdriveReused": "未變化（重用）",
     "gdrivePending": "已略過（仍在上傳）",
+    "gdriveDeferred": "已延後（超出每日上傳額度）",
     "gdriveFailed": "失敗",
     "gdriveDeletedSnapshots": "已刪除過期快照",
     "gdriveDeletedBlobs": "已刪除無引用資料",

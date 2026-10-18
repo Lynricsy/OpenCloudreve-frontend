@@ -1015,6 +1015,7 @@
     "gdriveUploaded": "Newly uploaded",
     "gdriveReused": "Unchanged (reused)",
     "gdrivePending": "Skipped (still uploading)",
+    "gdriveDeferred": "Deferred (daily upload limit)",
     "gdriveFailed": "Failed",
     "gdriveDeletedSnapshots": "Expired snapshots deleted",
     "gdriveDeletedBlobs": "Unreferenced data deleted",

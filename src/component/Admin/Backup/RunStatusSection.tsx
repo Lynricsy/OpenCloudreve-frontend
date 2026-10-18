@@ -63,6 +63,11 @@ const LastTaskStats = ({ task }: { task: BackupLastTask }) => {
   const s = task.summary ?? ({} as BackupLastTask["summary"]);
   const failed = s.failed ?? 0;
   const pending = s.pending ?? 0;
+  const deferred = s.deferred ?? 0;
+  const skipped = [
+    pending > 0 ? `${t("application:setting.gdrivePending")} ${pending.toLocaleString()}` : "",
+    deferred > 0 ? `${t("application:setting.gdriveDeferred")} ${deferred.toLocaleString()}` : "",
+  ].filter((v) => v);
   const tiles = [
     {
       icon: <DocumentCopyFilled />,
@@ -86,7 +91,7 @@ const LastTaskStats = ({ task }: { task: BackupLastTask }) => {
       icon: <DismissCircleFilled />,
       label: t("application:setting.gdriveFailed"),
       value: failed.toLocaleString(),
-      hint: pending > 0 ? `${t("application:setting.gdrivePending")} ${pending.toLocaleString()}` : undefined,
+      hint: skipped.length > 0 ? skipped.join(" · ") : undefined,
       tone: failed > 0 ? ("error" as const) : undefined,
     },
     {

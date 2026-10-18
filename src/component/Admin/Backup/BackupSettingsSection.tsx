@@ -1,9 +1,11 @@
 import { Alert, FormControl, Grid2, Link, Stack, Switch } from "@mui/material";
 import { useContext, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
+import SizeInput from "../../Common/SizeInput";
 import { DenseFilledTextField, SquareChip } from "../../Common/StyledComponents";
 import Archive from "../../Icons/Archive";
 import CalendarClock from "../../Icons/CalendarClock";
+import CloudArrowIUp from "../../Icons/CloudArrowIUp";
 import StorageOutlined from "../../Icons/StorageOutlined";
 import SettingForm from "../../Pages/Setting/SettingForm";
 import MultiplePolicySelectionInput from "../Group/EditGroup/MultiplePolicySelectionInput";
@@ -20,18 +22,19 @@ const parsePolicies = (raw?: string): number[] => {
   }
 };
 
-// 备份范围与计划：定时开关、执行时间、存储策略与快照保留天数
+// 备份范围与计划：定时开关、执行时间、快照保留天数、每日上传上限与存储策略
 const BackupSettingsSection = () => {
   const { t } = useTranslation("dashboard");
   const { setSettings, values } = useContext(SettingContext);
 
   const policies = useMemo(() => parsePolicies(values.gdrive_backup_policies), [values.gdrive_backup_policies]);
   const enabled = values.gdrive_backup_enabled === "1";
+  const dailyLimit = parseInt(values.gdrive_backup_daily_limit ?? "0") || 0;
 
   return (
     <Stack spacing={2}>
       <Grid2 container spacing={2}>
-        <Grid2 size={{ xs: 12, md: 6 }}>
+        <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
           <BackupCard>
             <BackupCardHeader
               icon={<CalendarClock />}
@@ -76,7 +79,7 @@ const BackupSettingsSection = () => {
             </SettingForm>
           </BackupCard>
         </Grid2>
-        <Grid2 size={{ xs: 12, md: 6 }}>
+        <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
           <BackupCard>
             <BackupCardHeader
               icon={<Archive />}
@@ -104,6 +107,28 @@ const BackupSettingsSection = () => {
                     },
                   }}
                 />
+              </FormControl>
+            </SettingForm>
+          </BackupCard>
+        </Grid2>
+        <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
+          <BackupCard>
+            <BackupCardHeader
+              icon={<CloudArrowIUp />}
+              tone={dailyLimit > 0 ? "primary" : "neutral"}
+              title={t("backup.dailyLimit")}
+              subtitle={t("backup.dailyLimitDes")}
+            />
+            <SettingForm title={t("backup.dailyLimitValue")} lgWidth={12}>
+              <FormControl fullWidth>
+                <SizeInput
+                  variant="outlined"
+                  required
+                  allowZero
+                  value={dailyLimit}
+                  onChange={(v) => setSettings({ gdrive_backup_daily_limit: v.toString() })}
+                />
+                <NoMarginHelperText>{t("backup.dailyLimitHint")}</NoMarginHelperText>
               </FormControl>
             </SettingForm>
           </BackupCard>
