@@ -22,13 +22,15 @@ const FileHash = ({ target }: FileHashProps) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const path = target.path;
+  // 切换当前版本时路径不变但内容变了，所以用路径加主实体标识当前展示的内容
+  const contentKey = `${path}|${target.primary_entity ?? ""}`;
 
   // undefined: 加载中；null: 查询失败
   const [hash, setHash] = useState<FileHashItem | undefined | null>(undefined);
   const [computing, setComputing] = useState(false);
-  // 记录当前展示的文件，丢弃切换文件之前发出请求的结果
-  const pathRef = useRef(path);
-  pathRef.current = path;
+  // 记录当前展示的内容，丢弃切换文件或版本之前发出请求的结果
+  const contentKeyRef = useRef(contentKey);
+  contentKeyRef.current = contentKey;
 
   // 只有登录用户在 my 文件系统（自己的空间，或管理员访问 <uid>@my）下才能发起计算
   const canCompute = useMemo(() => {
@@ -47,7 +49,9 @@ const FileHash = ({ target }: FileHashProps) => {
       const res = await dispatch(getFileHash({ uris: [path], compute }, !compute));
       return res.items?.[0] ?? null;
     },
-    [path, dispatch],
+    // contentKey 变化（切换版本）时也要重新获取
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [path, contentKey, dispatch],
   );
 
   // 打开详情或切换文件时加载
@@ -83,22 +87,22 @@ const FileHash = ({ target }: FileHashProps) => {
   const onCompute = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
-      const requestPath = path;
+      const requestKey = contentKey;
       setComputing(true);
       fetchHash(true)
         .then((item) => {
-          if (pathRef.current == requestPath) {
+          if (contentKeyRef.current == requestKey) {
             setHash(item);
           }
         })
         .catch(() => {})
         .finally(() => {
-          if (pathRef.current == requestPath) {
+          if (contentKeyRef.current == requestKey) {
             setComputing(false);
           }
         });
     },
-    [path, fetchHash],
+    [contentKey, fetchHash],
   );
 
   const computeLink = useMemo(() => {
@@ -148,6 +152,8 @@ const FileHash = ({ target }: FileHashProps) => {
           </>
         );
       case FileHashStatus.failed:
+        // 失败后服务端会冷却一段时间才允许重新计算（期间返回的仍是 failed），所以这里不提供计算按钮，
+        // 冷却结束后状态变回 missing，再显示按钮
         return (
           <>
             {t("application:fileManager.sha256Failed", {
@@ -155,7 +161,7 @@ const FileHash = ({ target }: FileHashProps) => {
                 ? t(`application:fileManager.sha256FailReasons.${hash.reason}`, { defaultValue: hash.reason })
                 : "-",
             })}
-            {computeLink}
+            {canCompute && ` ${t("application:fileManager.sha256RetryLater")}`}
           </>
         );
       case FileHashStatus.unsupported:
@@ -165,7 +171,7 @@ const FileHash = ({ target }: FileHashProps) => {
           ? t("application:fileManager.sha256Error", { reason: hash.reason })
           : t("application:fileManager.sha256LoadFailed");
     }
-  }, [hash, computeLink, t]);
+  }, [hash, computeLink, canCompute, t]);
 
   if (hash?.status == FileHashStatus.not_file) {
     return null;

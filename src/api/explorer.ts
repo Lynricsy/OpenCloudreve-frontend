@@ -374,6 +374,8 @@ export interface FileHashItem {
   status: FileHashStatus;
   // failed 时为原因代码，error 时为错误信息
   reason?: string;
+  // error 时的错误代码
+  code?: number;
 }
 
 export interface FileHashResponse {

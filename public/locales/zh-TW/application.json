@@ -461,6 +461,7 @@
     "sha256Uploading": "等待上傳完成",
     "sha256Missing": "未計算",
     "sha256Failed": "計算失敗（{{reason}}）",
+    "sha256RetryLater": "約 1 小時後可重新計算。",
     "sha256Unsupported": "目前儲存策略不支援",
     "sha256LoadFailed": "取得失敗",
     "sha256Error": "取得失敗：{{reason}}",

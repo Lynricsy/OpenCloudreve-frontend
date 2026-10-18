@@ -472,6 +472,7 @@
     "sha256Uploading": "Waiting for upload to finish",
     "sha256Missing": "Not computed",
     "sha256Failed": "Failed ({{reason}})",
+    "sha256RetryLater": "You can retry in about an hour.",
     "sha256Unsupported": "Not supported by current storage policy",
     "sha256LoadFailed": "Failed to load",
     "sha256Error": "Failed to load: {{reason}}",
