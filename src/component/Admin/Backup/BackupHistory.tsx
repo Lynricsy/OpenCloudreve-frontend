@@ -1,5 +1,6 @@
 import {
   Box,
+  Link,
   Skeleton,
   Stack,
   Table,
@@ -13,7 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useQueryState } from "nuqs";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getTaskList } from "../../../api/api";
 import type { AdminListService, Task } from "../../../api/dashboard";
@@ -62,7 +63,11 @@ const BackupHistory = () => {
   const pageSizeInt = parseInt(pageSize) || 10;
   const columns = isBackup ? backupColumns : restoreColumns;
 
+  // 列表请求序号：筛选或分页变化后，只接受最新一次查询的结果和 loading 收尾
+  const latestRequest = useRef(0);
+
   const fetchTasks = () => {
+    const request = ++latestRequest.current;
     setLoading(true);
     const params: AdminListService = {
       page: pageInt,
@@ -75,12 +80,19 @@ const BackupHistory = () => {
     };
     dispatch(getTaskList(params))
       .then((res) => {
+        if (request !== latestRequest.current) {
+          return;
+        }
         setTasks(res.tasks);
         setPageSize(res.pagination.page_size.toString());
         setCount(res.pagination.total_items ?? 0);
       })
       .catch(() => {})
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (request === latestRequest.current) {
+          setLoading(false);
+        }
+      });
   };
 
   useEffect(() => {
@@ -172,7 +184,20 @@ const BackupHistory = () => {
                 const props = task.summary?.props;
                 return (
                   <TableRow hover key={task.id} sx={{ cursor: "pointer" }} onClick={() => openDetails(task.id)}>
-                    <NoWrapTableCell>{task.id}</NoWrapTableCell>
+                    <NoWrapTableCell>
+                      {/* 整行点击之外的键盘可达入口 */}
+                      <Link
+                        component="button"
+                        variant="inherit"
+                        aria-label={t("backup.history.viewDetails", { id: task.id })}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openDetails(task.id);
+                        }}
+                      >
+                        {task.id}
+                      </Link>
+                    </NoWrapTableCell>
                     {isBackup && <NoWrapTableCell>{getTriggerText(props?.trigger, t)}</NoWrapTableCell>}
                     <NoWrapTableCell>
                       <TaskSummaryStatus

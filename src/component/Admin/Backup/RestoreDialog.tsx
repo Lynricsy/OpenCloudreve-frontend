@@ -34,6 +34,7 @@ import { DefaultCloseAction } from "../../Common/Snackbar/snackbar";
 import {
   DenseFilledTextField,
   NoWrapTableCell,
+  SecondaryButton,
   StyledCheckbox,
   StyledTableContainerPaper,
 } from "../../Common/StyledComponents";
@@ -65,6 +66,19 @@ enum RestoreTarget {
   user = "user",
 }
 
+// 恢复位置：原位置按快照中的完整原始路径恢复（keep_path），指定目录以所选项的父目录为基准
+enum RestoreLocation {
+  original = "original",
+  dir = "dir",
+}
+
+// 一次目录浏览的结果，与其所属的快照和浏览位置绑定
+interface BrowseListing {
+  key: string;
+  users: BackupSnapshotUser[];
+  entries: BackupSnapshotEntry[];
+}
+
 // 判断 path 是否为 parent 本身或位于 parent 之下
 const isWithin = (parent: string, path: string) => parent === "/" || path === parent || path.startsWith(parent + "/");
 
@@ -75,14 +89,24 @@ const RestoreDialog = ({ open, onClose, snapshot }: RestoreDialogProps) => {
   const formRef = useRef<HTMLFormElement>(null);
 
   const [location, setLocation] = useState<BrowseLocation | null>(null);
-  const [users, setUsers] = useState<BackupSnapshotUser[]>([]);
-  const [entries, setEntries] = useState<BackupSnapshotEntry[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [listing, setListing] = useState<BrowseListing | null>(null);
+  // 加载失败的浏览位置；与当前位置一致时显示错误与重试
+  const [failedKey, setFailedKey] = useState<string | null>(null);
+  const [reloadSeq, setReloadSeq] = useState(0);
   const [selected, setSelected] = useState<Record<string, BackupRestoreItem>>({});
   const [target, setTarget] = useState<RestoreTarget>(RestoreTarget.owner);
   const [targetUid, setTargetUid] = useState("");
+  const [restoreLocation, setRestoreLocation] = useState<RestoreLocation>(RestoreLocation.dir);
   const [targetDir, setTargetDir] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // 只展示属于当前浏览位置的结果，位置切换或加载失败后不会留下其他位置的旧条目
+  const currentKey = JSON.stringify([snapshot.id, location?.uid ?? null, location?.path ?? null]);
+  const current = listing?.key === currentKey ? listing : undefined;
+  const failed = failedKey === currentKey;
+  const loading = !current && !failed;
+  const users = current?.users ?? [];
+  const entries = current?.entries ?? [];
 
   // 打开对话框或切换快照时重置状态
   useEffect(() => {
@@ -90,9 +114,12 @@ const RestoreDialog = ({ open, onClose, snapshot }: RestoreDialogProps) => {
       return;
     }
     setLocation(null);
+    setListing(null);
+    setFailedKey(null);
     setSelected({});
     setTarget(RestoreTarget.owner);
     setTargetUid("");
+    setRestoreLocation(RestoreLocation.dir);
     setTargetDir(`/${t("backup.restoreDirPrefix")}-${dayjs(snapshot.created_at).format("YYYYMMDD-HHmm")}`);
   }, [open, snapshot.id]);
 
@@ -102,7 +129,6 @@ const RestoreDialog = ({ open, onClose, snapshot }: RestoreDialogProps) => {
     }
     // 快速切换目录时丢弃过期的响应
     let active = true;
-    setLoading(true);
     dispatch(
       browseBackupSnapshot(
         location ? { snapshot_id: snapshot.id, uid: location.uid, path: location.path } : { snapshot_id: snapshot.id },
@@ -112,22 +138,22 @@ const RestoreDialog = ({ open, onClose, snapshot }: RestoreDialogProps) => {
         if (!active) {
           return;
         }
-        if (location) {
-          setEntries(res.entries ?? []);
-        } else {
-          setUsers(res.users ?? []);
-        }
+        setListing({ key: currentKey, users: res.users ?? [], entries: res.entries ?? [] });
       })
-      .catch(() => {})
-      .finally(() => {
+      .catch(() => {
         if (active) {
-          setLoading(false);
+          setFailedKey(currentKey);
         }
       });
     return () => {
       active = false;
     };
-  }, [open, snapshot.id, location]);
+  }, [open, snapshot.id, location, reloadSeq]);
+
+  const retryBrowse = () => {
+    setFailedKey(null);
+    setReloadSeq((seq) => seq + 1);
+  };
 
   const selectedItems = useMemo(() => Object.values(selected), [selected]);
 
@@ -151,7 +177,7 @@ const RestoreDialog = ({ open, onClose, snapshot }: RestoreDialogProps) => {
     });
   };
 
-  const renderCheckbox = (uid: number, path: string) => {
+  const renderCheckbox = (uid: number, path: string, label: string) => {
     const self = !!selected[`${uid}:${path}`];
     // 自身已选中或被已选中的祖先目录覆盖
     const covered = selectedItems.some((item) => item.uid === uid && isWithin(item.path, path));
@@ -161,6 +187,7 @@ const RestoreDialog = ({ open, onClose, snapshot }: RestoreDialogProps) => {
         checked={covered}
         // 被祖先目录覆盖时不能单独取消
         disabled={covered && !self}
+        inputProps={{ "aria-label": label }}
         onChange={() => toggle(uid, path)}
       />
     );
@@ -177,14 +204,26 @@ const RestoreDialog = ({ open, onClose, snapshot }: RestoreDialogProps) => {
       enqueueSnackbar(t("backup.restoreNothingSelected"), { variant: "warning", action: DefaultCloseAction });
       return;
     }
+    let uid: number | undefined = undefined;
+    if (target === RestoreTarget.user) {
+      // 按数值整体解析（如 1e2 即 100），不能用 parseInt 截取前缀
+      uid = Number(targetUid);
+      if (!Number.isSafeInteger(uid) || uid <= 0) {
+        enqueueSnackbar(t("backup.targetUidInvalid"), { variant: "warning", action: DefaultCloseAction });
+        return;
+      }
+    }
+    const keepPath = restoreLocation === RestoreLocation.original;
 
     setSubmitting(true);
     dispatch(
       restoreBackup({
         snapshot_id: snapshot.id,
         items: selectedItems,
-        target_uid: target === RestoreTarget.user ? parseInt(targetUid) : undefined,
-        target_dir: targetDir,
+        target_uid: uid,
+        // 恢复到原位置时后端忽略目标目录
+        target_dir: keepPath ? "" : targetDir,
+        keep_path: keepPath,
       }),
     )
       .then(() => {
@@ -304,7 +343,21 @@ const RestoreDialog = ({ open, onClose, snapshot }: RestoreDialogProps) => {
                     </TableCell>
                   </TableRow>
                 )}
-                {!loading && (location ? entries.length : users.length) == 0 && (
+                {failed && (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center">
+                      <Stack spacing={1} alignItems="center" sx={{ py: 1 }} role="alert">
+                        <Typography variant="body2" color="error">
+                          {t("backup.browseFailed")}
+                        </Typography>
+                        <SecondaryButton size="small" variant="contained" onClick={retryBrowse}>
+                          {t("application:uploader.retry")}
+                        </SecondaryButton>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                )}
+                {current && (location ? entries.length : users.length) == 0 && (
                   <TableRow>
                     <TableCell colSpan={5} align="center">
                       <Typography variant="body2" color="text.secondary">
@@ -313,11 +366,17 @@ const RestoreDialog = ({ open, onClose, snapshot }: RestoreDialogProps) => {
                     </TableCell>
                   </TableRow>
                 )}
-                {!loading &&
+                {current &&
                   !location &&
                   users.map((user) => (
                     <TableRow hover key={user.uid}>
-                      <TableCell padding="checkbox">{renderCheckbox(user.uid, "/")}</TableCell>
+                      <TableCell padding="checkbox">
+                        {renderCheckbox(
+                          user.uid,
+                          "/",
+                          t("backup.selectUserLabel", { owner: user.owner, uid: user.uid }),
+                        )}
+                      </TableCell>
                       <NoWrapTableCell>
                         <Link
                           component="button"
@@ -336,11 +395,17 @@ const RestoreDialog = ({ open, onClose, snapshot }: RestoreDialogProps) => {
                       <NoWrapTableCell>{user.files}</NoWrapTableCell>
                     </TableRow>
                   ))}
-                {!loading &&
+                {current &&
                   location &&
                   entries.map((entry) => (
                     <TableRow hover key={entry.path}>
-                      <TableCell padding="checkbox">{renderCheckbox(location.uid, entry.path)}</TableCell>
+                      <TableCell padding="checkbox">
+                        {renderCheckbox(
+                          location.uid,
+                          entry.path,
+                          t("backup.selectEntryLabel", { owner: location.owner, path: entry.path }),
+                        )}
+                      </TableCell>
                       <NoWrapTableCell>
                         {entry.is_dir ? (
                           <Link
@@ -413,22 +478,46 @@ const RestoreDialog = ({ open, onClose, snapshot }: RestoreDialogProps) => {
                   </Box>
                 )}
               </SettingForm>
-              <SettingForm lgWidth={12} title={t("backup.targetDir")}>
-                <DenseFilledTextField
-                  fullWidth
-                  required
-                  value={targetDir}
-                  onChange={(e) => setTargetDir(e.target.value)}
-                  slotProps={{
-                    input: {
-                      inputProps: {
-                        pattern: "/.*",
-                        title: t("backup.targetDirPattern"),
+              <SettingForm lgWidth={12} title={t("backup.restoreLocation")}>
+                <RadioGroup
+                  row
+                  value={restoreLocation}
+                  onChange={(e) => setRestoreLocation(e.target.value as RestoreLocation)}
+                >
+                  <FormControlLabel
+                    value={RestoreLocation.original}
+                    control={<Radio size="small" />}
+                    label={<Typography variant="body2">{t("backup.restoreToOriginalPath")}</Typography>}
+                  />
+                  <FormControlLabel
+                    value={RestoreLocation.dir}
+                    control={<Radio size="small" />}
+                    label={<Typography variant="body2">{t("backup.restoreToTargetDir")}</Typography>}
+                  />
+                </RadioGroup>
+                <Box sx={{ mt: 1 }}>
+                  <DenseFilledTextField
+                    fullWidth
+                    required
+                    // 恢复到原位置时不使用目标目录；禁用的输入不参与表单校验
+                    disabled={restoreLocation === RestoreLocation.original}
+                    placeholder={t("backup.targetDir")}
+                    value={targetDir}
+                    onChange={(e) => setTargetDir(e.target.value)}
+                    slotProps={{
+                      input: {
+                        inputProps: {
+                          pattern: "/.*",
+                          title: t("backup.targetDirPattern"),
+                          "aria-label": t("backup.targetDir"),
+                        },
                       },
-                    },
-                  }}
-                />
-                <NoMarginHelperText>{t("backup.targetDirDes")}</NoMarginHelperText>
+                    }}
+                  />
+                  <NoMarginHelperText>
+                    {restoreLocation === RestoreLocation.original ? t("backup.keepPathDes") : t("backup.targetDirDes")}
+                  </NoMarginHelperText>
+                </Box>
               </SettingForm>
               <Alert severity="info" sx={{ fontSize: (theme) => theme.typography.body2.fontSize }}>
                 {t("backup.restoreDes")}

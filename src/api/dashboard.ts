@@ -633,7 +633,10 @@ export interface RestoreBackupService {
   items: BackupRestoreItem[];
   // 省略或 0 表示恢复到各自原所有者
   target_uid?: number;
+  // keep_path 为 true 时忽略
   target_dir: string;
+  // 按快照中的完整原始路径恢复到目标用户的“我的文件”下；否则以所选项的父目录为基准恢复到 target_dir 下
+  keep_path?: boolean;
 }
 
 // Google Drive 备份/恢复任务事件日志中的一条，消息按 code 翻译（backup.events.<code>）
@@ -724,6 +727,7 @@ export interface GDriveRestoreTaskState extends GDriveTaskEventLog {
   // 为空或 0 表示恢复到各自原所有者
   target_uid?: number;
   target_dir?: string;
+  keep_path?: boolean;
   phase?: string;
   total?: number;
   done?: number;

@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { useSnackbar } from "notistack";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
@@ -78,31 +78,59 @@ const BackupTaskDialog = ({ open, onClose, taskID }: BackupTaskDialogProps) => {
   const dispatch = useAppDispatch();
   const [task, setTask] = useState<Task>({ edges: {}, id: 0 });
   const [loading, setLoading] = useState(true);
+  // 请求世代：每次 (open, taskID) 变化时递增，旧世代请求的 then/catch/finally 一律丢弃
+  const generation = useRef(0);
+  // 同一世代内按发起顺序编号，较早发起的轮询不能覆盖较新的结果
+  const requestSeq = useRef(0);
+  const appliedSeq = useRef(0);
+
+  // 发起一次详情请求，返回的 isCurrent 判断该请求是否仍属于当前世代
+  const requestDetail = (id: number) => {
+    const gen = generation.current;
+    const seq = ++requestSeq.current;
+    const isCurrent = () => gen === generation.current;
+    const request = dispatch(getTaskDetail(id)).then((res) => {
+      if (isCurrent() && seq > appliedSeq.current) {
+        appliedSeq.current = seq;
+        setTask(res);
+      }
+    });
+    return { request, isCurrent };
+  };
 
   useEffect(() => {
+    generation.current++;
     if (!taskID || !open) {
       return;
     }
     setLoading(true);
-    dispatch(getTaskDetail(taskID))
-      .then((res) => setTask(res))
-      .catch(() => onClose())
-      .finally(() => setLoading(false));
+    const { request, isCurrent } = requestDetail(taskID);
+    request
+      .catch(() => {
+        if (isCurrent()) {
+          onClose();
+        }
+      })
+      .finally(() => {
+        if (isCurrent()) {
+          setLoading(false);
+        }
+      });
   }, [open, taskID]);
 
+  // 详情属于当前任务且已加载完成；切换任务后在新详情返回前不展示旧任务的内容
+  const ready = !loading && task.id === taskID;
   // 任务仍在执行时定时静默刷新详情，任务结束后停止
   const active = isTaskActive(task.status);
   useEffect(() => {
-    if (!open || !taskID || loading || !active) {
+    if (!open || !taskID || !ready || !active) {
       return;
     }
     const timer = setInterval(() => {
-      dispatch(getTaskDetail(taskID))
-        .then((res) => setTask(res))
-        .catch(() => {});
+      requestDetail(taskID).request.catch(() => {});
     }, historyPollInterval);
     return () => clearInterval(timer);
-  }, [open, taskID, loading, active, dispatch]);
+  }, [open, taskID, ready, active, dispatch]);
 
   return (
     <DraggableDialog
@@ -120,10 +148,10 @@ const BackupTaskDialog = ({ open, onClose, taskID }: BackupTaskDialogProps) => {
             <CSSTransition
               addEndListener={(node, done) => node.addEventListener("transitionend", done, false)}
               classNames="fade"
-              key={`${loading}`}
+              key={`${ready}`}
             >
               <Box>
-                {loading && (
+                {!ready && (
                   <Box
                     sx={{
                       py: 15,
@@ -136,7 +164,7 @@ const BackupTaskDialog = ({ open, onClose, taskID }: BackupTaskDialogProps) => {
                     <FacebookCircularProgress />
                   </Box>
                 )}
-                {!loading && <BackupTaskDetail task={task} />}
+                {ready && <BackupTaskDetail task={task} />}
               </Box>
             </CSSTransition>
           </SwitchTransition>
@@ -295,9 +323,9 @@ const BackupTaskDetail = ({ task }: { task: Task }) => {
                   : t("backup.restoreToOwner")}
               </Typography>
             </SettingForm>
-            <SettingForm title={t("backup.targetDir")} noContainer lgWidth={3}>
+            <SettingForm title={t("backup.restoreLocation")} noContainer lgWidth={3}>
               <Typography variant={"body2"} color={"textSecondary"} sx={{ overflowWrap: "anywhere" }}>
-                {restoreState.target_dir || "-"}
+                {restoreState.keep_path ? t("backup.restoreToOriginalPath") : restoreState.target_dir || "-"}
               </Typography>
             </SettingForm>
             <SettingForm
