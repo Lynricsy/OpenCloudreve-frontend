@@ -219,6 +219,26 @@ export function send2FALogin(req: TwoFALoginRequest): ThunkResponse<LoginRespons
   };
 }
 
+// 用原生客户端生成的一次性交接码换取登录会话；错误由交接页自行展示
+export function sendExchangeHandoff(code: string): ThunkResponse<LoginResponse> {
+  return async (dispatch, _getState) => {
+    return await dispatch(
+      send(
+        "/session/handoff/exchange",
+        {
+          data: { code },
+          method: "POST",
+        },
+        {
+          ...defaultOpts,
+          noCredential: true,
+          bypassSnackbar: () => true,
+        },
+      ),
+    );
+  };
+}
+
 export function getUserMe(): ThunkResponse<User> {
   return async (dispatch, _getState) => {
     return await dispatch(

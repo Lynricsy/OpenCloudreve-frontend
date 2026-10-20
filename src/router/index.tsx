@@ -11,6 +11,7 @@ import DesktopCallback from "../component/Pages/Login/Signin/DesktopCallback.tsx
 import MobileCallback from "../component/Pages/Login/Signin/MobileCallback.tsx";
 import SignIn from "../component/Pages/Login/Signin/SignIn.tsx";
 import SignUp from "../component/Pages/Login/Signup.tsx";
+import Handoff from "../component/Pages/Login/Signin/Handoff.tsx";
 import NoMatch from "../component/Pages/NoMatch.tsx";
 
 export const router = createBrowserRouter([
@@ -47,6 +48,11 @@ export const router = createBrowserRouter([
               {
                 path: "authorize",
                 element: <Authorize />,
+              },
+              {
+                // 原生客户端会话交接
+                path: "handoff",
+                element: <Handoff />,
               },
             ],
           },
