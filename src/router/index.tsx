@@ -11,6 +11,7 @@ import DesktopCallback from "../component/Pages/Login/Signin/DesktopCallback.tsx
 import MobileCallback from "../component/Pages/Login/Signin/MobileCallback.tsx";
 import SignIn from "../component/Pages/Login/Signin/SignIn.tsx";
 import SignUp from "../component/Pages/Login/Signup.tsx";
+import CaptchaWidget from "../component/Pages/Login/CaptchaWidget.tsx";
 import Handoff from "../component/Pages/Login/Signin/Handoff.tsx";
 import NoMatch from "../component/Pages/NoMatch.tsx";
 
@@ -21,6 +22,8 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       { path: "/", element: <HomeRedirect /> },
+      // 移动客户端 WebView 内嵌的验证码页，无框架外壳
+      { path: "/captcha", element: <CaptchaWidget /> },
       {
         path: "/",
         element: <HeadlessFrame />,
