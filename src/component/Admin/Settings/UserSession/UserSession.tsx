@@ -116,6 +116,41 @@ const UserSession = () => {
         </SettingSection>
         <SettingSection>
           <Typography variant="h6" gutterBottom>
+            {t("settings.mobileClient")}
+          </Typography>
+          <SettingSectionContent>
+            <SettingForm title={t("settings.mobileAndroidPackage")} lgWidth={5}>
+              <FormControl fullWidth>
+                <DenseFilledTextField
+                  value={values.mobile_android_package}
+                  onChange={(e) =>
+                    setSettings({
+                      mobile_android_package: e.target.value,
+                    })
+                  }
+                />
+                <NoMarginHelperText>{t("settings.mobileAndroidPackageDes")}</NoMarginHelperText>
+              </FormControl>
+            </SettingForm>
+            <SettingForm title={t("settings.mobileAndroidFingerprints")} lgWidth={5}>
+              <FormControl fullWidth>
+                <DenseFilledTextField
+                  value={values.mobile_android_sha256_fingerprints}
+                  onChange={(e) =>
+                    setSettings({
+                      mobile_android_sha256_fingerprints: e.target.value,
+                    })
+                  }
+                  multiline
+                  rows={3}
+                />
+                <NoMarginHelperText>{t("settings.mobileAndroidFingerprintsDes")}</NoMarginHelperText>
+              </FormControl>
+            </SettingForm>
+          </SettingSectionContent>
+        </SettingSection>
+        <SettingSection>
+          <Typography variant="h6" gutterBottom>
             {t("settings.avatar")}
           </Typography>
           <SettingSectionContent>

@@ -170,6 +170,8 @@ const Settings = () => {
                     "email_active",
                     "default_group",
                     "authn_enabled",
+                    "mobile_android_package",
+                    "mobile_android_sha256_fingerprints",
                     "expose_user_email",
                     "avatar_path",
                     "avatar_size",
